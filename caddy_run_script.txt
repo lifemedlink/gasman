@@ -1,0 +1,115 @@
+#!/bin/bash
+set -e
+
+echo "========================================"
+echo "   Medlynk + Gasman Final Deployment"
+echo "   PM2 + Caddy (SSL ONLY for Gasman)"
+echo "========================================"
+
+###############################################
+# STEP 1 — System Update
+###############################################
+apt update -y
+apt install -y curl unzip python3-venv debian-keyring debian-archive-keyring apt-transport-https
+
+###############################################
+# STEP 2 — Install PM2
+###############################################
+npm install pm2@latest -g
+
+###############################################
+# STEP 3 — Start Medlynk (api.js) on port 80
+###############################################
+echo "[ PM2 ] Starting Medlynk frontend/api.js ..."
+
+cd /home/lmltcpa/Medlynk2.0/frontend
+pm2 delete medlynk >/dev/null 2>&1 || true
+pm2 start api.js --name medlynk
+
+###############################################
+# STEP 4 — Start Gasman Flask App via PM2
+###############################################
+echo "[ PM2 ] Starting Gasman Flask backend ..."
+
+cd /home/lmltcpa/gasman
+source venv/bin/activate
+VENV_PYTHON=$(which python3)
+deactivate
+
+pm2 delete gasman >/dev/null 2>&1 || true
+pm2 start /home/lmltcpa/gasman/app.py --name gasman --interpreter "$VENV_PYTHON"
+
+###############################################
+# STEP 5 — Save PM2 startup
+###############################################
+echo "[ PM2 ] Saving PM2 boot configuration..."
+pm2 save
+pm2 startup systemd -u $USER --hp $HOME
+
+###############################################
+# STEP 6 — Install Caddy (latest stable)
+###############################################
+echo "[ Caddy ] Installing Caddy..."
+
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
+  | tee /usr/share/keyrings/caddy-stable-archive-keyring.gpg >/dev/null
+
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
+  | tee /etc/apt/sources.list.d/caddy-stable.list >/dev/null
+
+apt update -y
+apt install caddy -y
+
+###############################################
+# STEP 7 — Configure Caddy
+# Caddy will ONLY handle "gasman" (HTTPS).
+# Medlynk stays on port 80 directly (NO port conflict).
+###############################################
+
+echo "[ Caddy ] Writing final Caddyfile..."
+
+cat >/etc/caddy/Caddyfile <<'EOF'
+# ================================
+# GASMAN — SSL via Let's Encrypt
+# Caddy listens on port 443 ONLY.
+# ================================
+gasman.lmltcloud.in {
+    reverse_proxy localhost:9999
+}
+
+# ================================
+# MEDLYNK — DO NOT PROXY
+# DO NOT LISTEN on port 80
+# Medlynk runs directly on Node.
+# ================================
+http://medlynk.lmltcloud.in {
+    respond "Medlynk is running directly on port 80" 200
+}
+EOF
+
+###############################################
+# STEP 8 — Restart Caddy
+###############################################
+echo "[ Caddy ] Restarting Caddy..."
+systemctl restart caddy
+
+###############################################
+# COMPLETION MESSAGE
+###############################################
+echo ""
+echo "========================================"
+echo " DEPLOYMENT COMPLETE 🎉"
+echo "========================================"
+echo ""
+echo "Medlynk → http://medlynk.lmltcloud.in   (NO SSL)"
+echo "Gasman  → https://gasman.lmltcloud.in  (SSL Enabled)"
+echo ""
+echo "PM2 Processes:"
+pm2 list
+echo ""
+echo "Caddy Status:"
+systemctl status caddy --no-pager
+echo ""
+echo "========================================"
+echo " Everything is now running correctly! 🚀"
+echo "========================================"

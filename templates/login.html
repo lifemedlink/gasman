@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - GAS Monitoring System</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background: linear-gradient(to right, #141e30, #243b55);
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        #motion-graphics-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind the login form */
+        }
+
+        /* Login Form Container */
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-align: center;
+            z-index: 1; /* In front of the canvas */
+        }
+
+        .title-container h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .title-container h3 {
+            font-size: 14px;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-custom {
+            background: #ff6a00;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .btn-custom:hover {
+            background: #ff9000;
+        }
+
+        .footer-links a {
+            color: white;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="motion-graphics-canvas"></canvas>
+
+    <!-- Login Card -->
+    <div class="container">
+        <!-- Title Section -->
+        <div class="title-container">
+            <h1>GASMAN</h1>
+            <h3>GAS Monitoring and Navigation</h3>
+        </div>
+
+        <!-- Login Form -->
+        <form action="/login" method="POST">
+            <div class="mb-3">
+                <label for="user_name" class="form-label">Captain</label>
+                <input type="text" id="user_name" name="user_name" class="form-control" required placeholder="Enter your username">
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="btn btn-custom">Login</button>
+        </form>
+
+        <!-- Footer Links -->
+        <div class="mt-3 footer-links">
+            <a href="#">Forgot Password?</a> | 
+            <a href="#">Need Help?</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Motion Graphics Script -->
+    <script>
+        const canvas = document.getElementById('motion-graphics-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = 'rgba(255, 106, 0, 0.5)';
+                ctx.fill();
+            }
+            
+            update() {
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * .2) - .1;
+                let directionY = (Math.random() * .2) - .1;
+                let color = 'rgba(255, 106, 0, 0.5)';
+
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        function connect() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                    + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    if (distance < (canvas.width/8) * (canvas.height/8)) {
+                        opacityValue = 1 - (distance/20000);
+                        ctx.strokeStyle = 'rgba(255,136,0,' + opacityValue + ')';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0,0,innerWidth, innerHeight);
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            connect();
+        }
+
+        window.addEventListener('resize', function(){
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            init();
+        });
+
+        init();
+        animate();
+    </script>
+
+</body>
+</html>
+
