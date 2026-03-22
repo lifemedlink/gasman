@@ -1,0 +1,236 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<style>
+
+/* Remove base padding */
+.content {
+  padding: 0 !important;
+}
+
+/* Workspace Layout */
+.page-wrapper {
+  width: 100%;
+  padding: 24px 32px 40px;
+}
+
+/* Header */
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header h5 {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.header-top{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:20px;
+}
+
+.header-title{
+display:flex;
+flex-direction:column;
+}
+
+.gas-params-card{
+display:flex;
+align-items:center;
+gap:18px;
+background:var(--bg-card);
+border:1px solid var(--border);
+padding:14px 18px;
+border-radius:14px;
+font-size:13px;
+box-shadow:0 2px 6px rgba(0,0,0,.04);
+}
+
+.gas-label{
+font-weight:700;
+color:var(--text-muted);
+font-size:11px;
+text-transform:uppercase;
+}
+
+.gas-values{
+display:flex;
+gap:16px;
+font-weight:600;
+}
+
+.gas-values span{
+white-space:nowrap;
+}
+/* Card Styling */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+/* Table */
+.table thead th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--text-muted);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table td {
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid var(--border);
+}
+
+/* Buttons spacing */
+.action-row {
+  margin-bottom: 18px;
+}
+
+</style>
+
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+<div class="page-header">
+
+  <div class="header-top">
+
+    <div class="header-title">
+      <h5>Gas Consumption Monitoring</h5>
+      <small class="text-muted">
+        Multi-meter gas usage analytics & consumption reporting
+      </small>
+    </div>
+
+    <div class="gas-params-card">
+
+      <div class="gas-label">Gas Parameters</div>
+
+      <div class="gas-values">
+        <span>M=<b id="pM">-</b></span>
+        <span>S=<b id="pS">-</b></span>
+        <span>LP=<b id="pLP">-</b></span>
+        <span>T=<b id="pT">-</b>°C</span>
+        <span>G=<b id="pG">-</b></span>
+      </div>
+
+      <button class="btn btn-sm btn-warning"
+              onclick="openConfigBox()">
+        Config
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+  <!-- FILTER ROW -->
+  <div class="row g-3 action-row">
+
+    <div class="col-md-3">
+      <input type="date"
+             id="historyStart"
+             class="form-control form-control-sm">
+    </div>
+
+    <div class="col-md-3">
+      <input type="date"
+             id="historyEnd"
+             class="form-control form-control-sm">
+    </div>
+
+    <div class="col-md-6">
+      <button id="historyFetchBtn"
+              class="btn btn-sm btn-primary me-2">
+        Load
+      </button>
+
+      <button class="btn btn-sm btn-outline-secondary"
+              onclick="exportCSV()">
+        Export CSV
+      </button>
+    </div>
+
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-responsive">
+    <table class="table table-sm table-bordered align-middle">
+      <thead>
+        <tr>
+          <th rowspan="2">Device</th>
+          <th rowspan="2">Customer</th>
+          <th rowspan="2">Location</th>
+
+          <th colspan="3">Meter 1</th>
+          <th colspan="3">Meter 2</th>
+          <th colspan="3">Meter 3</th>
+          <th colspan="3">Meter 4</th>
+
+          <th rowspan="2">Total (L)</th>
+        </tr>
+
+        <tr>
+          <th>Sl.No</th><th>Readings</th><th>Consumption (L)</th>
+          <th>Sl.No</th><th>Readings</th><th>Consumption (L)</th>
+          <th>Sl.No</th><th>Readings</th><th>Consumption (L)</th>
+          <th>Sl.No</th><th>Readings</th><th>Consumption (L)</th>
+        </tr>
+      </thead>
+
+      <tbody id="adminHistoryRows">
+        <tr>
+          <td colspan="16" class="text-center text-muted">
+            Loading…
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+
+</div>
+
+<!-- CONFIG MODAL (UNCHANGED) -->
+<div class="modal fade" id="configModal">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6>Gas Parameters</h6>
+      </div>
+      <div class="modal-body">
+        <input id="adminPassword"
+               class="form-control mb-2"
+               type="password"
+               placeholder="Admin password">
+
+        <input id="cfgM" class="form-control mb-1" placeholder="M">
+        <input id="cfgS" class="form-control mb-1" placeholder="S">
+        <input id="cfgLP" class="form-control mb-1" placeholder="LP">
+        <input id="cfgT" class="form-control mb-1" placeholder="T">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success btn-sm"
+                onclick="saveConfig()">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<script src="/static/admin/admin_consumptions.js"></script>
+{% endblock %}

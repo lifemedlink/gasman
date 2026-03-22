@@ -1,0 +1,306 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<style>
+
+/* =========================================================
+   DATABASE OPERATIONS PANEL
+   Enterprise Admin Dashboard
+========================================================= */
+.content{
+padding:0 !important;
+}
+
+.page-wrapper{
+padding:24px 32px 40px;
+width:100%;
+}
+
+/* KPI + ACTION GRID */
+
+.kpi-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+gap:14px;
+margin-bottom:20px;
+align-items:end;
+}
+
+/* KPI CARDS */
+
+.kpi-card{
+background:var(--bg-card);
+border:1px solid var(--border);
+border-radius:12px;
+padding:14px;
+}
+
+.kpi-label{
+font-size:11px;
+text-transform:uppercase;
+color:var(--text-muted);
+}
+
+.kpi-value{
+font-size:22px;
+font-weight:700;
+}
+
+/* ACTION BUTTONS */
+
+.action-btn{
+height:48px;
+white-space:nowrap;
+}
+
+</style>
+
+<div class="page-wrapper">
+
+<h5>Database Operations</h5>
+
+<small class="text-muted">
+Enterprise database monitoring, maintenance, backup and restore
+</small>
+
+
+<!-- =====================================================
+     KPI STRIP
+===================================================== -->
+
+<div class="kpi-grid">
+
+<!-- TOTAL DATABASE SIZE -->
+
+<div class="kpi-card">
+<div class="kpi-label">Total DB Size</div>
+<div class="kpi-value" id="dbSize">0 MB</div>
+</div>
+
+<!-- DISK TOTAL -->
+
+<div class="kpi-card">
+<div class="kpi-label">Disk Total</div>
+<div class="kpi-value" id="diskTotal">0 GB</div>
+</div>
+
+<!-- DISK USED -->
+
+<div class="kpi-card">
+<div class="kpi-label">Disk Used</div>
+<div class="kpi-value text-danger" id="diskUsed">0 GB</div>
+</div>
+
+<!-- DISK FREE -->
+
+<div class="kpi-card">
+<div class="kpi-label">Disk Free</div>
+<div class="kpi-value text-success" id="diskFree">0 GB</div>
+</div>
+
+<!-- OLD GASMAN LOG COUNT -->
+
+<div class="kpi-card">
+<div class="kpi-label">Old Logs</div>
+<div class="kpi-value text-warning" id="kpiOldLogs">0</div>
+</div>
+
+
+<!-- =====================================================
+     MAINTENANCE ACTIONS
+===================================================== -->
+
+<!-- CLEAN GASMAN -->
+
+<button
+class="btn btn-sm btn-danger action-btn"
+onclick="cleanupGasman()">
+
+Clean GASMAN Logs
+
+</button>
+
+
+<!-- CLEAN DATA LOGGER -->
+
+<button
+class="btn btn-sm btn-warning action-btn"
+onclick="cleanupLogger()">
+
+Clean DATA LOGGER
+
+</button>
+
+
+<!-- OPTIMIZE TABLES -->
+
+<button
+class="btn btn-sm btn-primary action-btn"
+onclick="optimizeTables()">
+
+Optimize Tables
+
+</button>
+
+
+<!-- CREATE BACKUP -->
+
+<button
+class="btn btn-sm btn-success action-btn"
+onclick="createBackup()">
+
+Create Backup
+
+</button>
+
+
+<!-- SHOW BACKUPS -->
+
+<button
+class="btn btn-sm btn-info action-btn"
+onclick="loadBackups()">
+
+Backup Manager
+
+</button>
+
+</div>
+
+
+<!-- =====================================================
+     TABLE ANALYTICS
+===================================================== -->
+
+<h6>Database Table Analytics</h6>
+
+<div class="table-responsive">
+
+<table class="table table-sm table-bordered">
+
+<thead>
+<tr>
+<th>Database</th>
+<th>Table</th>
+<th>Rows</th>
+<th>Size (MB)</th>
+</tr>
+</thead>
+
+<tbody id="largestTables">
+
+<tr>
+<td colspan="4" class="text-center text-muted">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- =====================================================
+     BACKUP MANAGER
+===================================================== -->
+
+<h6 class="mt-4">Backup Manager</h6>
+
+<div class="table-responsive">
+
+<table class="table table-sm table-bordered">
+
+<thead>
+<tr>
+<th>Backup File</th>
+<th>Size</th>
+<th>Created</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="backupTable">
+
+<tr>
+<td colspan="4" class="text-center text-muted">
+No backups loaded
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+</div>
+<!-- =====================================================
+     SERVICE PASSWORD MODAL
+===================================================== -->
+
+<div class="modal fade" id="servicePasswordModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5 class="modal-title">Service Authorization</h5>
+</div>
+
+<div class="modal-body">
+
+<label class="form-label">
+Enter service password to continue
+</label>
+
+<input
+type="password"
+class="form-control"
+id="servicePasswordInput"
+placeholder="Service password"
+/>
+
+<div
+id="servicePasswordError"
+class="text-danger mt-2"
+style="display:none;"
+>
+Invalid password
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+class="btn btn-secondary"
+data-bs-dismiss="modal">
+Cancel
+</button>
+
+<button
+class="btn btn-primary"
+onclick="submitServicePassword()">
+Verify
+</button>
+
+</div>
+
+</div>
+</div>
+</div>
+{% endblock %}
+
+
+
+{% block footer %}
+
+<!-- =====================================================
+     DATABASE OPERATIONS JS CONTROLLER
+===================================================== -->
+
+<script src="/static/admin/admin_database.js"></script>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<h5 class="mb-3">🚨 Live Tasks</h5>
+
+<table class="table table-sm table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>Device</th>
+      <th>Driver</th>
+      <th>Status</th>
+      <th>Gas %</th>
+      <th>Tracking ID</th>
+      <th>Updated</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="taskRows">
+    <tr><td colspan="7" class="text-muted">Loading…</td></tr>
+  </tbody>
+</table>
+
+{% endblock %}
+
+{% block footer %}
+<script src="/static/admin/admin_tasks.js"></script>
+{% endblock %}

@@ -1,0 +1,67 @@
+gas/
+├── app.py
+├── requirements.txt
+├── gasman_setup.sql
+│
+├── config/
+│   ├── __init__.py
+│   ├── settings.py          🔑 (Google Maps key, Redis, DB)
+│   ├── db_pool.py
+│   └── redis_client.py      ⚡ Redis single connection
+│
+├── modules/
+│   ├── __init__.py
+│   ├── auth.py              🔐 Login / roles
+│   ├── devices.py           📟 Devices + tasks
+│   ├── fast_cache.py        ⚡ Redis live cache APIs
+│   ├── activity.py          📊 Activity (1 year)
+│   ├── history.py           🗂 History (calendar, export)
+│   ├── health.py            ❤️ Device health score
+│   └── users.py             👷 User performance
+│
+├── services/
+│   ├── __init__.py
+│   ├── device_sync.py       🔄 MySQL → Redis sync
+│   ├── gas_classifier.py    🔥 LOW / CRITICAL logic
+│   ├── proof_engine.py      🧾 Gas filling proof (85%)
+│   └── performance_calc.py  📈 User score logic
+│
+├── templates/
+│   ├── base.html
+│   ├── base_admin.html
+│   │
+│   ├── login.html
+│   ├── unauthorized.html
+│   │
+│   ├── admin_dashboard.html
+│   ├── admin_devices.html
+│   ├── admin_activity.html
+│   ├── admin_users.html
+│   ├── admin_history.html
+│   │
+│   ├── user_home.html
+│   ├── user_devices.html
+│   ├── user_activity.html
+│   └── user_history.html
+│
+├── static/
+│   ├── styles.css
+│   │
+│   ├── admin/
+│   │   ├── admin_script.js
+│   │   └── admin_map.js
+│   │
+│   ├── user/
+│   │   ├── user_script.js
+│   │   └── drive_mode.js
+│   │
+│   └── common/
+│       ├── map_loader.js     🌍 Google Maps loader (single)
+│       ├── ws_client.js      🔌 WebSocket
+│       └── utils.js
+│
+├── ws/
+│   ├── __init__.py
+│   └── device_ws.py          ⚡ Live movement
+│
+└── README.md

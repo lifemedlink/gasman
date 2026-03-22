@@ -1,0 +1,151 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<style>
+
+.content{
+padding:0 !important;
+}
+
+.page-wrapper{
+padding:24px 32px 40px;
+}
+
+/* Header */
+
+.page-header{
+margin-bottom:18px;
+}
+
+.page-header h5{
+font-weight:600;
+margin-bottom:4px;
+}
+
+/* KPI strip */
+
+.alert-kpi-grid{
+display:grid;
+grid-template-columns:repeat(4,160px);
+gap:14px;
+margin-bottom:20px;
+}
+
+.alert-kpi{
+background:var(--bg-card);
+border:1px solid var(--border);
+border-radius:12px;
+padding:14px;
+}
+
+.alert-kpi-label{
+font-size:11px;
+text-transform:uppercase;
+color:var(--text-muted);
+}
+
+.alert-kpi-value{
+font-size:22px;
+font-weight:700;
+}
+
+/* Table */
+
+.table thead th{
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:.6px;
+color:var(--text-muted);
+}
+
+.sev-critical{
+color:#dc3545;
+font-weight:700;
+}
+
+.sev-warning{
+color:#f59e0b;
+font-weight:700;
+}
+
+.sev-info{
+color:#2563eb;
+font-weight:700;
+}
+
+</style>
+
+<div class="page-wrapper">
+
+<!-- HEADER -->
+
+<div class="page-header">
+<h5>Predictive Alerts</h5>
+<small class="text-muted">
+AI-based anomaly detection and risk forecasting
+</small>
+</div>
+
+<!-- KPI STRIP -->
+
+<div class="alert-kpi-grid">
+
+<div class="alert-kpi">
+<div class="alert-kpi-label">Critical</div>
+<div class="alert-kpi-value text-danger" id="kpiCriticalAlerts">0</div>
+</div>
+
+<div class="alert-kpi">
+<div class="alert-kpi-label">Warning</div>
+<div class="alert-kpi-value text-warning" id="kpiWarningAlerts">0</div>
+</div>
+
+<div class="alert-kpi">
+<div class="alert-kpi-label">Info</div>
+<div class="alert-kpi-value text-primary" id="kpiInfoAlerts">0</div>
+</div>
+
+<div class="alert-kpi">
+<div class="alert-kpi-label">Total</div>
+<div class="alert-kpi-value" id="kpiTotalAlerts">0</div>
+</div>
+
+</div>
+
+<!-- TABLE -->
+
+<div class="table-responsive">
+
+<table class="table table-sm table-bordered align-middle">
+
+<thead>
+<tr>
+<th>Severity</th>
+<th>Device</th>
+<th>Prediction</th>
+<th>ETA</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="predictiveAlertRows">
+
+<tr>
+<td colspan="5" class="text-center text-muted">
+Loading alerts...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<script src="/static/admin/admin_predictive_alerts.js"></script>
+{% endblock %}

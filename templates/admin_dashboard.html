@@ -1,0 +1,276 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<style>
+
+/* =========================================================
+   ENTERPRISE CONTROL CENTER – FULL WORKSPACE MODE
+========================================================= */
+
+/* Override base padding completely */
+.content {
+  padding: 0 !important;
+}
+
+/* Main container */
+.dashboard-container {
+  width: 100%;
+  padding: 0 32px 40px;
+}
+.page-wrapper{
+padding:24px 32px 40px;
+max-width:1600px;
+}
+/* =========================================================
+   HEADER STRIP
+========================================================= */
+
+.dashboard-header {
+  padding: 26px 0 22px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 22px;
+  background: linear-gradient(
+    to right,
+    rgba(37,99,235,0.06),
+    transparent
+  );
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.dashboard-sub {
+  font-size: 13px;
+  margin-top: 4px;
+  color: var(--text-muted);
+}
+.dashboard-top{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:30px;
+}
+
+.dashboard-title-block{
+max-width:520px;
+}
+
+.dashboard-header .kpi-grid{
+display:grid;
+grid-template-columns:repeat(6,140px);
+gap:12px;
+}
+/* =========================================================
+   KPI STRIP (Sticky)
+========================================================= */
+
+.kpi-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+gap:14px;
+margin-bottom:20px;
+align-items:end;
+}
+
+.kpi-card{
+background: var(--bg-card);
+border:1px solid var(--border);
+padding:12px;
+border-radius:12px;
+transition:.25s ease;
+cursor:pointer;
+}
+
+.kpi-value{
+font-size:22px;
+font-weight:800;
+}
+
+.kpi-card:hover {
+  box-shadow: 0 10px 28px rgba(0,0,0,.08);
+  transform: translateY(-3px);
+}
+
+.kpi-card.active {
+  border-color: var(--accent);
+  background: rgba(37,99,235,.08);
+}
+
+.kpi-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   MAP SECTION
+========================================================= */
+
+.map-section {
+  margin-top: 24px;
+}
+
+.map-card {
+  background: var(--bg-card);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-header {
+  padding: 16px 22px;
+  font-weight: 700;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.map-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.map-btn {
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.map-btn:hover {
+  background: rgba(37,99,235,.08);
+  border-color: var(--accent);
+}
+
+/* Full workspace map height */
+#adminMap {
+  width: 100%;
+  height: calc(100vh - 240px);
+  min-height: 650px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1400px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 992px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  #adminMap { height: 520px; }
+}
+
+@media (max-width: 576px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  #adminMap { height: 420px; }
+}
+
+</style>
+
+<div class="dashboard-container">
+
+  <!-- HEADER -->
+<div class="dashboard-header">
+
+  <div class="dashboard-top">
+
+    <div class="dashboard-title-block">
+      <div class="dashboard-title">
+        GASMAN – Gas Devices Monitoring and Operation Management
+      </div>
+      <div class="dashboard-sub">
+        • Real-time Gas Monitoring • Fleet Intelligence • Device Health Analytics
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+
+      <div class="kpi-card active" data-filter="ALL">
+        <div class="kpi-label">All Devices</div>
+        <div class="kpi-value" id="kpiAllDevices">0</div>
+      </div>
+
+      <div class="kpi-card" data-filter="TASKS">
+        <div class="kpi-label">Active Tasks</div>
+        <div class="kpi-value text-primary" id="kpiTasks">0</div>
+      </div>
+
+      <div class="kpi-card" data-filter="CRITICAL">
+        <div class="kpi-label">Critical Devices</div>
+        <div class="kpi-value text-danger" id="kpiCritical">0</div>
+      </div>
+
+      <div class="kpi-card" data-filter="LOW">
+        <div class="kpi-label">Low Devices</div>
+        <div class="kpi-value text-warning" id="kpiLow">0</div>
+      </div>
+
+      <div class="kpi-card" data-filter="NORMAL">
+        <div class="kpi-label">Normal Devices</div>
+        <div class="kpi-value text-success" id="kpiNormal">0</div>
+      </div>
+
+      <div class="kpi-card" data-filter="OFFLINE">
+        <div class="kpi-label">Offline Devices</div>
+        <div class="kpi-value text-secondary" id="kpiOffline">0</div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+  <!-- MAP SECTION -->
+  <div class="map-section">
+
+    <div class="map-card">
+
+      <div class="map-header">
+        <span>Live Device & Driver Tracking</span>
+
+        <div class="map-actions">
+          <button class="map-btn" onclick="loadAdminMap()">Refresh</button>
+          <button class="map-btn" onclick="document.getElementById('adminMap').requestFullscreen()">Fullscreen</button>
+        </div>
+      </div>
+
+      <div id="adminMap"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block footer %}
+
+<script>
+  window.GASMAN_ROLE = "{{ role }}";
+  window.GASMAN_USER = "{{ user_name }}";
+</script>
+
+<script src="/static/admin/admin_dashboard.js"></script>
+<script src="/static/admin/admin_map.js"></script>
+
+
+{% endblock %}

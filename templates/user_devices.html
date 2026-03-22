@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.device-wrapper{
+  padding:12px;
+}
+
+#searchInput{
+  border-radius:12px;
+  margin-bottom:14px;
+}
+
+.device-card{
+  background:#fff;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  cursor:pointer;
+  transition:.15s ease;
+}
+.device-card:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 22px rgba(0,0,0,.12);
+}
+
+.badge{
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  color:#fff;
+}
+.badge-critical{ background:#dc3545; }
+.badge-low{ background:#f59f00; color:#000; }
+.badge-normal{ background:#198754; }
+.badge-offline{ background:#6c757d; }
+
+#deviceModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+.modal-card{
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  width:92%;
+  max-width:420px;
+}
+</style>
+
+<div class="device-wrapper">
+  <input id="searchInput" class="form-control"
+         placeholder="Search device ID or location">
+  <div id="deviceList"></div>
+</div>
+
+<!-- ======================================================
+     DEVICE MODAL
+====================================================== -->
+<div id="deviceModal">
+  <div class="modal-card">
+    <h5 id="m_id"></h5>
+    <p><b>Customer:</b> <span id="m_customer"></span></p>
+    <p><b>Address:</b> <span id="m_location"></span></p>
+    <p><b>Gas Level:</b> <span id="m_gas"></span></p>
+    <p><b>Status:</b> <span id="m_status"></span></p>
+    <p><b>Task:</b> <span id="m_task"></span></p>
+    <p><b>Last Update:</b> <span id="m_time"></span></p>
+
+    <!-- ACCEPT TASK BUTTON -->
+    <button id="m_accept"
+            class="btn btn-success w-100 mb-2"
+            style="display:none;">
+        Accept Task
+    </button>
+
+    <a id="m_nav"
+       target="_blank"
+       class="btn btn-primary w-100 mb-2">
+       Navigate
+    </a>
+
+    <button class="btn btn-secondary w-100"
+            onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script src="/static/user/user_devices.js"></script>
+{% endblock %}

@@ -1,0 +1,402 @@
+/* =====================
+   GASMAN – GLOBAL UI (FINAL)
+===================== */
+
+:root {
+  --radius: 14px;
+  --shadow: 0 8px 22px rgba(0,0,0,0.08);
+}
+
+/* -------------------------------------------------
+   BASE
+-------------------------------------------------- */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+}
+
+/* -------------------------------------------------
+   CARDS
+-------------------------------------------------- */
+.card {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: none;
+}
+
+/* -------------------------------------------------
+   BADGES / STATUS
+-------------------------------------------------- */
+.badge-critical,
+.bg-critical {
+  background: #dc3545 !important;
+}
+
+.badge-low,
+.bg-low {
+  background: #ffc107 !important;
+  color: #000 !important;
+}
+
+.badge-normal,
+.bg-normal {
+  background: #198754 !important;
+}
+
+/* -------------------------------------------------
+   MAP (CRITICAL FIX)
+-------------------------------------------------- */
+#adminMap,
+#userMap,
+#map {
+  width: 100%;
+  height: 420px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #e9ecef;
+}
+
+@media (max-width: 768px) {
+  #adminMap,
+  #userMap,
+  #map {
+    height: 55vh;
+  }
+}
+
+/* -------------------------------------------------
+   SCROLL PANELS
+-------------------------------------------------- */
+.scroll-box {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.scroll-box::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-box::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 6px;
+}
+
+/* -------------------------------------------------
+   DEVICE LIST CARDS
+-------------------------------------------------- */
+.device-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: #fff;
+  border-left: 6px solid #adb5bd;
+}
+
+.device-card.low {
+  border-left-color: #ffc107;
+}
+
+.device-card.critical {
+  border-left-color: #dc3545;
+}
+
+/* -------------------------------------------------
+   DRIVER CARDS
+-------------------------------------------------- */
+.driver-card {
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff;
+  border-left: 6px solid #0d6efd;
+  margin-bottom: 6px;
+}
+
+/* -------------------------------------------------
+   KPI
+-------------------------------------------------- */
+.kpi {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* -------------------------------------------------
+   TOP NAV TABS (ADMIN)
+-------------------------------------------------- */
+.navbar {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+
+.navbar .nav-link {
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.navbar .nav-link.active {
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+}
+
+/* -------------------------------------------------
+   MOBILE IMPROVEMENTS
+-------------------------------------------------- */
+@media (max-width: 576px) {
+  h5 {
+    font-size: 1rem;
+  }
+
+  .card {
+    border-radius: 12px;
+  }
+}
+
+/* -------------------------------------------------
+   TABLES
+-------------------------------------------------- */
+.table-sm td,
+.table-sm th {
+  font-size: 0.85rem;
+}
+/* =========================================================
+   GASMAN – TASK CARD (SMART DRIVER CARD)
+========================================================= */
+
+/* Floating task card */
+.card-float {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 94%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 44px rgba(0,0,0,.35);
+  padding: 16px;
+  z-index: 9999;
+  animation: slideUp .35s ease-out;
+}
+
+/* Slide animation */
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 40px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* Header inside task card */
+.card-float .fw-bold {
+  font-size: 1rem;
+}
+
+/* Task rows */
+.task-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+/* =========================================================
+   TASK TIMELINE (ASSIGNED → COMPLETED)
+========================================================= */
+
+.timeline {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 8px 0;
+}
+
+.timeline-step {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  position: relative;
+  color: #adb5bd;
+}
+
+/* Line */
+.timeline-step::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: #dee2e6;
+  z-index: -1;
+}
+
+.timeline-step:first-child::before {
+  display: none;
+}
+
+/* Circle */
+.timeline-step::after {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 0 auto 4px;
+  border-radius: 50%;
+  background: #dee2e6;
+}
+
+/* Done step */
+.timeline-step.done {
+  color: #198754;
+}
+.timeline-step.done::after {
+  background: #198754;
+}
+.timeline-step.done::before {
+  background: #198754;
+}
+
+/* Active step */
+.timeline-step.active {
+  color: #0d6efd;
+  font-weight: 700;
+}
+.timeline-step.active::after {
+  background: #0d6efd;
+  animation: pulse 1.5s infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(13,110,253,.6); }
+  70%  { box-shadow: 0 0 0 8px rgba(13,110,253,0); }
+  100% { box-shadow: 0 0 0 0 rgba(13,110,253,0); }
+}
+
+/* =========================================================
+   MOBILE ACTIVITY CARDS
+========================================================= */
+
+#activityCards {
+  display: none;
+}
+
+.mobile-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.mobile-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+/* Enable mobile cards */
+@media (max-width: 768px) {
+  table {
+    display: none;
+  }
+  #activityCards {
+    display: block;
+  }
+}
+
+/* =========================================================
+   GAS PIN LEGEND (OPTIONAL UI)
+========================================================= */
+
+.gas-legend {
+  position: absolute;
+  bottom: 160px;
+  left: 12px;
+  background: #fff;
+  padding: 8px 10px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+}
+
+.gas-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.gas-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.gas-dot.low {
+  background: #ffc107;
+}
+
+.gas-dot.critical {
+  background: #dc3545;
+}
+
+/* =========================================================
+   BUTTON POLISH
+========================================================= */
+
+.btn {
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.btn-success {
+  box-shadow: 0 6px 18px rgba(25,135,84,.35);
+}
+
+.btn-danger {
+  box-shadow: 0 6px 18px rgba(220,53,69,.35);
+}
+
+.btn-primary {
+  box-shadow: 0 6px 18px rgba(13,110,253,.35);
+}
+.task-steps {
+  display:flex;
+  justify-content:space-between;
+  position:relative;
+  margin-top:10px;
+}
+.task-steps .step {
+  text-align:center;
+  flex:1;
+}
+.task-steps .step span {
+  display:block;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#ccc;
+  margin:0 auto 4px;
+}
+.task-steps .step.done span {
+  background:#28a745;
+}
+.task-steps .progress {
+  position:absolute;
+  top:4px;
+  left:0;
+  right:0;
+  height:4px;
+  background:#eee;
+  z-index:-1;
+}
+.task-steps .bar {
+  height:100%;
+  background:#28a745;
+  transition:width .4s ease;
+}

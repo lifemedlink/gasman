@@ -1,0 +1,472 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<style>
+
+/* ======================================================
+PAGE LAYOUT
+Clean industrial control-room layout
+====================================================== */
+
+.content{
+padding:0 !important;
+background:#f5f7fb;
+}
+
+.page-wrapper{
+width:100%;
+max-width:1800px;
+margin:0 auto;
+padding:25px 30px 50px;
+}
+
+/* ======================================================
+HEADER
+====================================================== */
+
+.page-header{
+margin-bottom:20px;
+}
+
+.page-header h1{
+font-size:24px;
+font-weight:600;
+margin-bottom:4px;
+}
+
+.page-header p{
+font-size:13px;
+color:#64748b;
+margin-bottom:0;
+}
+.header-top{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:20px;
+}
+
+.header-title{
+display:flex;
+flex-direction:column;
+}
+
+.header-title h1{
+margin-bottom:2px;
+}
+
+.header-title p{
+margin-top:0;
+font-size:13px;
+color:#64748b;
+}
+
+.header-kpis{
+display:flex;
+gap:12px;
+}
+
+.header-kpis .kpi-card{
+min-width:120px;
+padding:12px;
+}
+/* ======================================================
+KPI CARDS
+====================================================== */
+
+.kpi-card{
+background:#fff;
+border:1px solid #e5e7eb;
+border-radius:10px;
+padding:12px 10px;
+text-align:center;
+transition:all .2s ease;
+box-shadow:0 1px 2px rgba(0,0,0,0.05);
+}
+
+.kpi-value{
+font-size:18px;
+font-weight:700;
+margin-bottom:2px;
+}
+
+.kpi-card small{
+font-size:11px;
+color:#64748b;
+}
+
+.kpi-card:hover{
+transform:translateY(-3px);
+box-shadow:0 6px 14px rgba(0,0,0,0.08);
+}
+
+/* ======================================================
+FILTER BAR
+====================================================== */
+
+.filter-bar{
+background:#fff;
+border:1px solid #e5e7eb;
+border-radius:10px;
+padding:14px 18px;
+margin-bottom:18px;
+}
+
+/* ======================================================
+TABLE
+====================================================== */
+
+.table-responsive{
+background:#fff;
+border-radius:10px;
+border:1px solid #e5e7eb;
+overflow:hidden;
+}
+
+.table{
+margin:0;
+}
+
+.table thead{
+background:#f8fafc;
+}
+
+.table thead th{
+font-size:12px;
+letter-spacing:.5px;
+text-transform:uppercase;
+color:#64748b;
+border-bottom:1px solid #e5e7eb;
+padding:12px 14px;
+}
+
+.table td{
+padding:12px 14px;
+font-size:13px;
+}
+
+.table-hover tbody tr:hover{
+background:#f1f5f9;
+cursor:pointer;
+}
+
+/* ======================================================
+STATUS BADGE
+====================================================== */
+
+.badge-status{
+padding:6px 12px;
+font-size:11px;
+font-weight:600;
+border-radius:999px;
+}
+
+.status-COMPLETED{
+background:#dcfce7;
+color:#059669;
+}
+
+.status-CANCELLED,
+.status-REJECTED{
+background:#fee2e2;
+color:#b91c1c;
+}
+
+.status-ASSIGNED,
+.status-EN_ROUTE{
+background:#fef3c7;
+color:#b45309;
+}
+
+.status-ON_SITE,
+.status-FILLING{
+background:#e0f2fe;
+color:#0369a1;
+}
+
+.status-FILLED{
+background:#e0e7ff;
+color:#3730a3;
+}
+
+/* ======================================================
+INDUSTRIAL LIFECYCLE PIPELINE
+Used in activity lifecycle column
+====================================================== */
+
+.lifecycle-pipeline{
+display:flex;
+align-items:center;
+gap:6px;
+font-size:11px;
+font-weight:600;
+white-space:nowrap;
+cursor:pointer;
+}
+
+.lifecycle-step{
+display:flex;
+align-items:center;
+gap:4px;
+color:#9ca3af;
+}
+
+.lifecycle-dot{
+width:10px;
+height:10px;
+border-radius:50%;
+background:#e5e7eb;
+}
+
+/* completed stages */
+
+.lifecycle-step.done .lifecycle-dot{
+background:#10b981;
+}
+
+.lifecycle-step.done{
+color:#059669;
+}
+
+/* current stage */
+
+.lifecycle-step.active{
+color:#2563eb;
+}
+
+.lifecycle-step.active .lifecycle-dot{
+background:#2563eb;
+animation:pulse 1.2s infinite;
+}
+/* cancelled stage */
+
+.lifecycle-step.cancelled{
+color:#b91c1c;
+}
+
+.lifecycle-step.cancelled .lifecycle-dot{
+background:#ef4444;
+}
+.lifecycle-arrow{
+color:#cbd5f5;
+font-size:12px;
+}
+
+/* pulse animation */
+
+@keyframes pulse{
+0%{box-shadow:0 0 0 0 rgba(37,99,235,0.5);}
+70%{box-shadow:0 0 0 8px rgba(37,99,235,0);}
+100%{box-shadow:0 0 0 0 rgba(37,99,235,0);}
+}
+
+/* ======================================================
+LIVE TASK INDICATOR
+====================================================== */
+
+.live-dot{
+display:inline-block;
+width:8px;
+height:8px;
+background:#ef4444;
+border-radius:50%;
+margin-left:6px;
+animation:pulseLive 1s infinite;
+}
+
+@keyframes pulseLive{
+0%{opacity:1}
+50%{opacity:.3}
+100%{opacity:1}
+}
+
+/* ======================================================
+TIMELINE MODAL
+====================================================== */
+
+.timeline-item{
+position:relative;
+padding-left:22px;
+margin-bottom:16px;
+}
+
+.timeline-dot{
+position:absolute;
+left:0;
+top:8px;
+width:10px;
+height:10px;
+background:#2563eb;
+border-radius:50%;
+}
+
+.modal-body{
+max-height:65vh;
+overflow-y:auto;
+}
+
+</style>
+
+
+<div class="page-wrapper">
+
+<!-- =====================================================
+HEADER
+===================================================== -->
+<div class="page-header">
+
+<div class="header-top">
+
+<div class="header-title">
+<h1>Admin Activity</h1>
+<p>Real-time operational lifecycle tracking with FSM visualization</p>
+</div>
+
+<div class="header-kpis">
+
+<div class="kpi-card">
+<div class="kpi-value" id="kpiTotal">0</div>
+<small>Total Activities</small>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-value text-success" id="kpiCompleted">0</div>
+<small>Completed</small>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-value text-danger" id="kpiCancelled">0</div>
+<small>Cancelled</small>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<!-- =====================================================
+FILTER BAR
+===================================================== -->
+
+<div class="filter-bar">
+
+<div class="row g-3 align-items-center">
+
+<div class="col-md-3">
+<input type="date" id="fromDate" class="form-control form-control-sm">
+</div>
+
+<div class="col-md-3">
+<input type="date" id="toDate" class="form-control form-control-sm">
+</div>
+
+<div class="col-md-3">
+<select id="statusFilter" class="form-select form-select-sm">
+<option value="">All Status</option>
+<option value="ASSIGNED">Accepted</option>
+<option value="EN_ROUTE">On The Way</option>
+<option value="ON_SITE">Location Reached</option>
+<option value="FILLING">Gas Filling</option>
+<option value="FILLED">Gas Filled</option>
+<option value="COMPLETED">Completed</option>
+<option value="CANCELLED">Cancelled</option>
+<option value="REJECTED">Rejected</option>
+</select>
+</div>
+
+<div class="col-md-3">
+<button class="btn btn-sm btn-outline-secondary w-100" onclick="exportCSV()">
+Export CSV
+</button>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+ACTIVITY TABLE
+===================================================== -->
+
+<div class="table-responsive">
+
+<table class="table table-sm table-hover align-middle">
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Device</th>
+<th>User</th>
+<th>Customer</th>
+<th>Location</th>
+<th>Status</th>
+<th style="width:420px;">Lifecycle</th>
+<th>Gas %</th>
+<th style="width:180px;">Tracking ID</th>
+</tr>
+</thead>
+
+<tbody id="adminActivityRows">
+
+<tr>
+<td colspan="9" class="text-center text-muted">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+TIMELINE MODAL
+Shows detailed task lifecycle
+===================================================== -->
+
+<div class="modal fade" id="trackingModal">
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h6 class="modal-title">
+Tracking ID: <span id="trackId"></span>
+</h6>
+
+<button class="btn-close" data-bs-dismiss="modal"></button>
+
+</div>
+
+<div class="modal-body">
+
+<div id="trackingTimeline"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block footer %}
+
+<!-- Core Admin JS -->
+<script src="/static/admin/admin_script.js"></script>
+
+<!-- Activity Module -->
+<script src="/static/admin/admin_user_activity.js"></script>
+
+{% endblock %}

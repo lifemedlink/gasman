@@ -1,0 +1,104 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+<style>
+.content { padding: 0 !important; }
+
+.page-wrapper {
+  width: 100%;
+  padding: 24px 32px 40px;
+}
+</style>
+
+<div class="page-wrapper">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-semibold mb-0">Driver / User Management</h4>
+      <small class="text-muted">Drivers, Devices & Active Sessions</small>
+    </div>
+  </div>
+
+  <!-- DRIVER LIST -->
+  <div class="card mb-4">
+    <div class="card-header fw-semibold">
+      🚚 Driver Master List
+    </div>
+
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Devices Assigned</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="driverTable">
+          <tr>
+            <td colspan="4" class="text-center text-muted p-3">
+              Loading drivers...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ACTIVE SESSIONS -->
+  <div class="card">
+    <div class="card-header fw-semibold">
+      🔐 Active Login Sessions
+    </div>
+
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Device</th>
+            <th>Last Seen</th>
+            <th width="140">Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="sessionTable">
+          <tr>
+            <td colspan="4" class="text-center text-muted small p-3">
+              Loading sessions...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+<!-- DEVICE MODAL -->
+<div class="modal fade" id="deviceModal">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">
+          Devices Assigned
+        </h6>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ul id="deviceList" class="list-group">
+          <li class="list-group-item text-muted">
+            Loading...
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<script src="/static/admin/admin_script.js"></script>
+<script src="/static/admin/admin_users.js"></script>
+{% endblock %}

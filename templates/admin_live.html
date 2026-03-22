@@ -1,0 +1,99 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<style>
+
+/* Remove base padding */
+.content { padding: 0 !important; }
+
+.page-wrapper {
+  width: 100%;
+  padding: 24px 32px 40px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-main);
+}
+
+.card-industrial {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.card-header-industrial {
+  padding: 18px 22px;
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.table-industrial {
+  width: 100%;
+  font-size: 14px;
+}
+
+.table-industrial thead th {
+  padding: 14px 20px;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: .6px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.table-industrial tbody td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.table-industrial tbody tr:hover {
+  background: rgba(37,99,235,.05);
+}
+
+</style>
+
+<div class="page-wrapper">
+
+  <div class="section-title">🚚 Live Active Tasks</div>
+
+  <div class="card-industrial">
+    <div class="card-header-industrial">
+      Active Driver Operations
+    </div>
+
+    <table class="table-industrial">
+      <thead>
+        <tr>
+          <th>Driver</th>
+          <th>Device</th>
+          <th>Site</th>
+          <th>Status</th>
+          <th>Gas %</th>
+          <th>Tracking</th>
+          <th>Accepted At</th>
+          <th>Map</th>
+        </tr>
+      </thead>
+      <tbody id="liveTaskTable">
+        <tr>
+          <td colspan="8" class="text-center text-muted">
+            Loading live tasks...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<script src="/static/admin/admin_live.js"></script>
+{% endblock %}

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GASMAN-Captain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Global Styles -->
+  <link href="/static/styles.css" rel="stylesheet">
+  <link rel="icon" href="/static/favicon.ico">
+  {% block head %}{% endblock %}
+</head>
+<script>
+async function checkSessionResponse(response) {
+  if (response.status === 401) {
+    const data = await response.json().catch(() => null);
+
+    if (data && data.force_logout) {
+      alert("⚠ You have been logged out.\nLogged in from another device.");
+      window.location.href = "/login";
+      return true;
+    }
+  }
+  return false;
+}
+
+// Override fetch globally
+const originalFetch = window.fetch;
+window.fetch = async function (...args) {
+  const response = await originalFetch(...args);
+
+  const shouldStop = await checkSessionResponse(response);
+  if (shouldStop) return;
+
+  return response;
+};
+</script>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-primary px-3">
+  <span class="navbar-brand fw-bold">GASMAN</span>
+  {% if user_name %}
+    <span class="text-white small">
+      {{ user_name }} |
+      <a href="/logout" class="text-white text-decoration-none">Logout</a>
+    </span>
+  {% endif %}
+</nav>
+
+<main class="container-fluid p-3">
+  {% block content %}{% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ===============================
+     LIVE FORCE LOGOUT (USER)
+================================ -->
+<script>
+if (window.GASMAN_USER) {
+
+  const wsProtocol = location.protocol === "https:" ? "wss" : "ws";
+
+  const ws = new WebSocket(
+    `${wsProtocol}://${location.host}/ws/session/${window.GASMAN_USER}`
+  );
+
+  ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "force_logout") {
+      alert("You have been logged out by administrator");
+      window.location = "/login";
+    }
+  };
+
+  ws.onerror = function() {
+    console.warn("Session WebSocket error");
+  };
+}
+</script>
+
+{% block footer %}{% endblock %}
+</body>
+</html>

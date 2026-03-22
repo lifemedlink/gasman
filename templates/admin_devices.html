@@ -1,0 +1,102 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<style>
+
+.content { padding: 0 !important; }
+
+.page-wrapper {
+  width: 100%;
+  padding: 24px 32px 40px;
+}
+
+.device-table th {
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+  color: var(--text-muted);
+}
+
+.device-table td {
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.excel-like th,
+.excel-like td {
+  border: 1px solid var(--border);
+}
+
+tr.offline {
+  background: rgba(0,0,0,.04);
+}
+
+.search-input {
+  max-width: 260px;
+}
+
+</style>
+
+<div class="page-wrapper">
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h5 class="fw-semibold mb-0">Devices Health And Gas Monitoring</h5>
+  </div>
+
+  <input
+    id="searchBox"
+    class="form-control form-control-sm search-input"
+    placeholder="Search Device ID">
+</div>
+
+<div class="mb-3">
+  <select id="filterStatus" class="form-select form-select-sm w-auto">
+    <option value="ALL">All Devices</option>
+    <option value="PRIORITY">Priority First</option>
+    <option value="FAULT">System Fault</option>
+    <option value="GAS_ISSUE">Gas Issue</option>
+    <option value="GAS_ALERT">Gas Alert</option>
+    <option value="OP_ISSUE">Operation Issue</option>
+    <option value="OP_ALERT">Operation Alert</option>
+    <option value="SAFE">Safe Only</option>
+  </select>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-sm table-hover excel-like device-table">
+    <thead>
+      <tr>
+        <th>Customer Name</th>
+        <th>Site Address</th>
+        <th>Data Logger Serial No</th>
+        <th>System Status</th>
+        <th>Gas Alarm Status</th>
+        <th>Gas Leak LEL %</th>
+        <th>Operation Status</th>
+        <th>Tank Level %</th>
+        <th>Tank Press. (bar)</th>
+        <th>Line Press. (bar)</th>
+        <th>Last Update</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+
+    <tbody id="deviceTableBody">
+      <tr>
+        <td colspan="12" class="text-center text-muted py-3">
+          Loading devices…
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<script src="/static/admin/admin_devices.js"></script>
+{% endblock %}

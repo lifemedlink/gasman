@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>GASMAN – Admin</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+<!-- INTER FONT -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://unpkg.com/feather-icons"></script>
+
+<style>
+:root {
+  --bg-main: #f5f7fa;
+  --bg-card: #ffffff;
+  --bg-sidebar: #0f172a;
+  --bg-topbar: #ffffff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #2563eb;
+}
+
+body.dark {
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --bg-sidebar: #020617;
+  --bg-topbar: #111827;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #1e293b;
+  --accent: #3b82f6;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease;
+}
+
+h1, h2, h3, h4, h5 { font-weight: 600; }
+
+.table {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.table th { font-weight: 600; font-size: 13px; }
+.table td { font-size: 13px; }
+
+.layout { display: flex; min-height: 100vh; }
+
+/* ===============================
+   SIDEBAR (ENTERPRISE FIXED)
+================================ */
+
+.sidebar {
+  width: 240px;
+  background: var(--bg-sidebar);
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  transition: width 0.25s ease;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar-logo {
+  font-weight: 600;
+  font-size: 18px;
+  padding: 0 24px 20px;
+  color: #ffffff;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .sidebar-logo {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  font-size: 14px;
+  color: #cbd5e1;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sidebar-nav a i {
+  width: 18px;
+  height: 18px;
+}
+
+.sidebar.collapsed .sidebar-nav a {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.sidebar.collapsed .sidebar-nav a span {
+  display: none;
+}
+
+.sidebar-nav a:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.sidebar-nav a.active {
+  background: rgba(37,99,235,0.2);
+  border-left: 3px solid var(--accent);
+  color: #ffffff;
+}
+
+.sidebar.collapsed .sidebar-nav a.active {
+  border-left: none;
+  background: rgba(37,99,235,0.25);
+  border-radius: 10px;
+  margin: 4px 10px;
+}
+.sidebar-footer {
+  padding: 16px 24px;
+  font-size: 13px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .sidebar-footer {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  height: 60px;
+  background: var(--bg-topbar);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+}
+
+.sidebar-toggle { cursor: pointer; margin-right: 20px; }
+
+.system-health {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.health-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  position: relative;
+}
+
+.health-dot::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.6;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  70% { transform: scale(2.5); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.content {
+  flex: 1;
+  padding: 20px 24px;
+  color: var(--text-main);
+}
+/* =================================
+   ENTERPRISE DEVICE STATUS BADGES
+================================= */
+
+.badge-status {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+  min-width: 72px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* SYSTEM STATUS */
+
+.badge-ok {
+  background: linear-gradient(135deg,#16a34a,#22c55e);
+  color: #fff;
+  box-shadow: 0 0 6px rgba(34,197,94,0.4);
+}
+
+.badge-fault {
+  background: linear-gradient(135deg,#dc2626,#ef4444);
+  color: #fff;
+  box-shadow: 0 0 6px rgba(239,68,68,0.4);
+}
+
+/* SAFE / ALERT / ISSUE */
+
+.badge-safe {
+  background: #e6f9f0;
+  color: #059669;
+  border: 1px solid #10b981;
+}
+
+.badge-alert {
+  background: #fff7ed;
+  color: #d97706;
+  border: 1px solid #f59e0b;
+}
+
+.badge-issue {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #ef4444;
+}
+</style>
+
+{% block head %}{% endblock %}
+</head>
+
+<body>
+
+<div class="layout">
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">GASMAN Admin</div>
+
+    <div class="sidebar-nav">
+      <a href="/admin" class="{% if request.url.path == '/admin' %}active{% endif %}">
+        <i data-feather="home"></i> <span>Dashboard</span>
+      </a>
+      <a href="/admin/live"><i data-feather="activity"></i> <span>Live Tasks</span></a>
+      <a href="/admin/devices"><i data-feather="cpu"></i> <span>Devices</span></a>
+      <a href="/admin/activity"><i data-feather="bar-chart-2"></i> <span>Activity</span></a>
+      <a href="/admin/users"><i data-feather="users"></i> <span>Drivers</span></a>
+      <a href="/admin/consumptions"><i data-feather="trending-up"></i> <span>Usage</span></a>
+      <a href="/admin/predictive"><i data-feather="alert-triangle"></i> <span>Predictive Alerts</span></a>
+      <a href="/admin/database"><i data-feather="database"></i><span>Database Health</span></a>
+      </div>
+
+    <div class="sidebar-footer">
+      {{ user_name }}<br>
+      <a href="/logout" class="text-danger text-decoration-none">Logout</a>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="topbar">
+      <div class="d-flex align-items-center">
+
+        <div class="sidebar-toggle" onclick="toggleSidebar()">
+          <i data-feather="menu"></i>
+        </div>
+
+        <div class="system-health">
+          <span class="health-dot"></span>
+          <span>System Online</span>
+        </div>
+
+<div id="liveInfo" style="font-size:13px; color:var(--text-muted); margin-left:20px;">
+  <span id="liveDate"></span> |
+  <span id="liveTime"></span> |
+  <span id="liveLocation">Detecting location...</span> |
+  <span id="liveWeather">
+    <span id="weatherIcon">--</span>
+    <span id="weatherTemp">--°C</span>
+  </span>
+</div>
+
+      </div>
+
+      <div onclick="toggleTheme()" style="cursor:pointer;">
+        <i data-feather="moon"></i>
+      </div>
+    </div>
+
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+feather.replace();
+
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("collapsed");
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+}
+
+/* DATE + TIME */
+function updateLiveInfo() {
+  const now = new Date();
+  document.getElementById("liveDate").innerText =
+    now.toLocaleDateString('en-IN', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+
+  document.getElementById("liveTime").innerText =
+    now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+updateLiveInfo();
+setInterval(updateLiveInfo, 1000);
+
+/* GPS LOCATION */
+function fetchLocation() {
+  if (!navigator.geolocation) {
+    document.getElementById("liveLocation").innerText = "Location unavailable";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+// 🔥 ADD THIS LINE
+  fetchWeatherByCoords(lat, lon);
+    try {
+      const res = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key={{ config.GOOGLE_MAPS_API_KEY }}`
+      );
+      const data = await res.json();
+
+      if (data.results && data.results.length) {
+
+        const components = data.results[0].address_components;
+
+        let area = "";
+        let city = "";
+        let state = "";
+        let country = "";
+
+        components.forEach(comp => {
+          if (comp.types.includes("sublocality") || comp.types.includes("locality")) {
+            city = comp.long_name;
+          }
+          if (comp.types.includes("administrative_area_level_1")) {
+            state = comp.long_name;
+          }
+          if (comp.types.includes("country")) {
+            country = comp.long_name;
+          }
+          if (comp.types.includes("route") && !area) {
+            area = comp.long_name;
+          }
+        });
+
+        const cleanAddress = [area, city, state, country]
+          .filter(Boolean)
+          .join(", ");
+
+        document.getElementById("liveLocation").innerText =
+          cleanAddress || "Location detected";
+
+      } else {
+        document.getElementById("liveLocation").innerText = "Location not found";
+      }
+
+    } catch {
+      document.getElementById("liveLocation").innerText = "Location error";
+    }
+
+  }, () => {
+    document.getElementById("liveLocation").innerText = "Permission denied";
+  });
+}
+
+fetchLocation();
+/* ================================
+   WEATHER ICON + AUTO REFRESH
+================================ */
+
+let lastWeatherCoords = null;
+
+function getWeatherIcon(code) {
+  if ([0].includes(code)) return "☀️";
+  if ([1,2].includes(code)) return "🌤️";
+  if ([3].includes(code)) return "☁️";
+  if ([45,48].includes(code)) return "🌫️";
+  if ([51,53,55,61,63,65].includes(code)) return "🌧️";
+  if ([71,73,75].includes(code)) return "❄️";
+  if ([95,96,99].includes(code)) return "⛈️";
+  return "🌡️";
+}
+
+async function fetchWeatherByCoords(lat, lon) {
+  try {
+    lastWeatherCoords = { lat, lon };
+
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&timezone=auto&_=${Date.now()}`
+    );
+
+    const data = await res.json();
+
+    if (data.current) {
+
+      const temp = Math.round(data.current.temperature_2m);
+      const code = data.current.weather_code;
+
+      const icon = getWeatherIcon(code);
+
+      const tempElement = document.getElementById("weatherTemp");
+      const iconElement = document.getElementById("weatherIcon");
+
+      iconElement.innerText = icon;
+      tempElement.innerText = `${temp}°C`;
+
+      if (temp >= 45) {
+        tempElement.style.color = "#dc2626";
+      } else if (temp >= 40) {
+        tempElement.style.color = "#f97316";
+      } else {
+        tempElement.style.color = "var(--text-muted)";
+      }
+
+    }
+
+  } catch {
+    document.getElementById("weatherTemp").innerText = "Error";
+  }
+}
+
+/* Auto refresh every 5 minutes */
+setInterval(() => {
+  if (lastWeatherCoords) {
+    fetchWeatherByCoords(lastWeatherCoords.lat, lastWeatherCoords.lon);
+  }
+}, 300000);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- GOOGLE MAPS API -->
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_MAPS_API_KEY }}&libraries=routes&callback">
+</script>
+<!-- Marker Clusterer -->
+<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.umd.js"></script>
+<!-- GASMAN CORE UTILS (GLOBAL) -->
+<script src="/static/common/utils.js"></script>
+
+<!-- ADMIN CORE -->
+<script src="/static/admin/admin_script.js"></script>
+
+{% block footer %}{% endblock %}
+
+</body>
+</html>

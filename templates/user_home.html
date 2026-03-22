@@ -1,0 +1,586 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+:root{
+  --primary:#0d6efd;
+  --success:#28a745;
+  --danger:#dc3545;
+  --bg:#f4f6f9;
+}
+body{ background:var(--bg); }
+
+/* ================= TOP TABS ================= */
+.user-tabs{
+  display:flex;
+  gap:8px;
+  padding:8px;
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--bg);
+  align-items:center;
+}
+
+.user-tabs a{
+  flex:1;
+  padding:10px 0;
+  text-align:center;
+  font-weight:800;
+  font-size:14px;
+  border-radius:999px;
+  background:#fff;
+  color:var(--primary);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+  text-decoration:none;
+}
+
+.user-tabs a:hover{
+  text-decoration:none;
+}
+
+.user-tabs a.active{
+  background:var(--primary);
+  color:#fff;
+  font-weight:900;
+}
+
+/* ================= MODE TOGGLE ================= */
+.mode-toggle{
+  width:42px;
+  height:36px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-weight:900;
+  font-size:16px;
+  transition:.25s ease;
+  user-select:none;
+}
+
+.mode-toggle.manual{
+  background:#ff0000;
+  color:#ffffff;
+}
+
+.mode-toggle.auto{
+  background:#28a745;
+  color:#ffffff;  
+}
+
+/* ================= REFRESH BUTTON ================= */
+#refreshBtn{
+  padding:8px 14px;
+  border-radius:999px;
+  border:none;
+  background:#fff;
+  font-size:16px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  transition:0.2s;
+}
+
+#refreshBtn:hover{
+  transform:rotate(20deg);
+}
+
+/* ================= MAP ================= */
+#userMapWrapper{
+  position:relative;
+  width:100%;
+  height:calc(100vh - 110px);
+}
+
+#userMap{
+  width:100%;
+  height:100%;
+  border-radius:16px;
+}
+
+/* ================= MAP CONTROL STACK ================= */
+
+#mapControls{
+  position:absolute;
+  top:20px;
+  right:20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  z-index:5;
+}
+
+#btnRecenter{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:none;
+  background:#ffffff;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s ease;
+}
+
+#btnRecenter:hover{
+  transform:scale(1.08);
+  box-shadow:0 4px 10px rgba(0,0,0,.35);
+}
+
+#btnRecenter:active{
+  transform:scale(0.95);
+}
+
+/* ================= MOBILE FIRST SLIDE-UP TASK CARD ================= */
+
+#taskCard{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#ffffff;
+  border-radius:22px 22px 0 0;
+  box-shadow:0 -10px 35px rgba(0,0,0,.25);
+  padding:18px 18px 28px;
+  z-index:9999;
+  transform:translateY(110%);
+  /*transition:transform .35s cubic-bezier(.22,1,.36,1);*/
+  transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .25s ease;
+  max-height:75vh;
+  overflow-y:auto;
+}
+
+#taskCard.show{
+  transform:translateY(0);
+}
+/* Smooth slide-down close animation */
+#taskCard.slide-down{
+  transform: translateY(110%);
+  opacity: 0;
+  transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .25s ease;
+}
+.task-subtitle{
+  font-size:13px;
+  color:#6c757d;
+  margin-top:2px;
+}
+/* Drag indicator */
+.task-drag{
+  width:50px;
+  height:5px;
+  background:#dee2e6;
+  border-radius:10px;
+  margin:0 auto 14px auto;
+}
+
+/* Header */
+.task-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.task-title{
+  font-weight:800;
+  font-size:16px;
+}
+
+.task-badge{
+  font-size:12px;
+  font-weight:700;
+  padding:5px 10px;
+  border-radius:999px;
+}
+
+.badge-critical{ background:#dc3545; color:#fff; }
+.badge-low{ background:#ffc107; color:#000; }
+.badge-active{ background:#1a73e8; color:#fff; }
+
+ /* Info rows */
+.task-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  margin-bottom:8px;
+  flex-wrap:nowrap;
+}
+
+.task-row b{
+  min-width:90px;
+  flex-shrink:0;
+}
+
+.task-row span{
+  text-align:right;
+  flex-grow:1;
+}
+
+/* ================= PROGRESS TIMELINE ================= */
+
+.task-progress{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:18px 0 8px;
+  position:relative;
+}
+
+/* Grey base line */
+.task-progress::before{
+  content:"";
+  position:absolute;
+  top:11px;
+  left:18px;
+  right:18px;
+  height:4px;
+  background:#e9ecef;
+  border-radius:4px;
+  z-index:0;
+}
+
+/* Blue animated fill line */
+.task-progress-fill{
+  position:absolute;
+  top:11px;
+  left:18px;
+  height:4px;
+  background:#1a73e8;
+  border-radius:4px;
+  z-index:1;
+  width:0%;
+  transition:width .45s cubic-bezier(.22,1,.36,1);
+}
+
+.step{
+  position:relative;
+  z-index:2;
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:#e9ecef;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:700;
+  transition:.3s ease;
+  overflow:hidden;
+}
+
+/* Active step */
+.step.active{
+  background:#1a73e8;
+  color:#fff;
+}
+
+/* Pulse animation */
+.step.current::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  border:2px solid rgba(26,115,232,.6);
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  0%{ transform:scale(1); opacity:1; }
+  70%{ transform:scale(1.8); opacity:0; }
+  100%{ transform:scale(1.8); opacity:0; }
+}
+
+/* Checkmark animation */
+.step.completed{
+  background:#1a73e8;
+  color:#fff;
+}
+
+.step.completed::before{
+  content:"✔";
+  font-size:14px;
+  animation:pop .3s ease;
+}
+
+@keyframes pop{
+  0%{ transform:scale(0); }
+  80%{ transform:scale(1.2); }
+  100%{ transform:scale(1); }
+}
+
+/* Buttons */
+.task-actions{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+
+.task-actions button{
+  flex:1;
+  border-radius:14px;
+  font-weight:700;
+  padding:12px 0;
+}
+
+
+.eta-value{
+  font-weight:600;
+  color:#212529;
+  white-space:nowrap;
+}
+
+/* Smooth navigate button animation */
+.btn-primary {
+  transition: all .25s ease;
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.btn-loading::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  animation: spin .6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+/* Close */
+#taskClose{
+  position:absolute;
+  top:10px;
+  right:14px;
+  border:none;
+  background:transparent;
+  font-size:20px;
+  cursor:pointer;
+}
+#taskToggle{
+  position:absolute;
+  top:10px;
+  right:50px;
+  border:none;
+  background:transparent;
+  font-size:18px;
+  cursor:pointer;
+}
+/* ================= TASK CARD MINIMIZE ================= */
+
+#taskCard.minimized{
+  transform: translateY(calc(100% - 70px));
+}
+
+#taskCard.dragging{
+  transition:none;
+}
+</style>
+
+<!-- ================= TABS ================= -->
+<div class="user-tabs">
+  <a class="active" href="/user">Drive</a>
+  <a href="/user/devices">Devices</a>
+  <a href="/user/activity">Activity</a>
+
+  <div id="modeToggle" class="mode-toggle">
+    <span id="modeLetter">Mode</span>
+  </div>
+
+  <button id="refreshBtn">🔄</button>
+</div>
+
+<!-- ================= MAP ================= -->
+<div id="userMapWrapper">
+  <div id="userMap"></div>
+
+  <!-- MAP CONTROL STACK -->
+  <div id="mapControls">
+    <button id="btnRecenter" title="My Location">
+  <svg width="20" height="20" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="6" fill="#1a73e8"/>
+    <circle cx="12" cy="12" r="2.5" fill="#ffffff"/>
+    <circle cx="12" cy="4" r="1.2" fill="#1a73e8"/>
+    <circle cx="12" cy="20" r="1.2" fill="#1a73e8"/>
+    <circle cx="4" cy="12" r="1.2" fill="#1a73e8"/>
+    <circle cx="20" cy="12" r="1.2" fill="#1a73e8"/>
+  </svg>
+</button>
+  </div>
+</div>
+<!-- GAS CONFIRM MODAL -->
+<div id="gasConfirmModal" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+">
+
+  <div style="
+    background:#fff;
+    width:85%;
+    max-width:340px;
+    border-radius:16px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+  ">
+
+    <div style="font-weight:800; font-size:16px; margin-bottom:12px;">
+      Confirm Completion
+    </div>
+
+    <div id="gasConfirmText" style="font-size:14px; margin-bottom:18px;">
+      Are you sure?
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button id="gasConfirmCancel" class="btn btn-outline-secondary" style="flex:1;">
+        Cancel
+      </button>
+      <button id="gasConfirmOk" class="btn btn-success" style="flex:1;">
+        OK
+      </button>
+    </div>
+
+  </div>
+</div>
+<!-- ================= TASK CARD ================= -->
+<div id="taskCard">
+
+  <div class="task-drag"></div>
+  <button id="taskToggle">▼</button>
+    <!-- NEW TASK -->
+  <div id="taskPending">
+
+    <div class="task-header">
+      <div class="task-title">Gas Fill Task</div>
+      <div id="t_priority" class="task-badge badge-critical">CRITICAL</div>
+    </div>
+
+    <div class="task-row"><b>Device</b><span id="t_device"></span></div>
+    <div class="task-row"><b>Customer</b><span id="t_customer"></span></div>
+    <div class="task-row"><b>Location</b><span id="t_location"></span></div>
+    <div class="task-row">
+  <b>ETA</b>
+  <span id="t_eta">--</span>
+</div>
+    <div class="task-actions">
+      <button id="btnAccept" class="btn btn-success">Accept</button>
+      <button id="btnReject" class="btn btn-outline-danger">Reject</button>
+    </div>
+  </div>
+
+<!-- ACTIVE TASK -->
+<div id="taskActive" style="display:none">
+
+  <div class="task-header">
+    <div>
+      <div id="a_title" class="task-title"></div>
+      <div id="a_subtitle" class="task-subtitle"></div>
+    </div>
+    <div id="a_status_badge" class="task-badge badge-active">Accepted</div>
+  </div>
+
+  <div class="task-row">
+    <b>Location</b>
+    <span id="a_location"></span>
+  </div>
+
+  <div class="task-row">
+    <b>Tracking</b>
+    <span id="a_tracking"></span>
+  </div>
+
+ <div class="task-row">
+    <b>ETA</b>
+    <span id="a_eta" class="eta-value">-</span>
+  </div>
+
+  <div class="task-row">
+    <b>Status</b>
+    <span id="a_status"></span>
+  </div>
+<!-- GAS PROGRESS BAR -->
+<div id="gasProgressRow" class="task-row" style="display:none; flex-direction:column; gap:6px;">
+  <b>Gas Level</b>
+
+  <div style="
+    width:100%;
+    height:10px;
+    background:#e9ecef;
+    border-radius:10px;
+    overflow:hidden;
+  ">
+    <div id="gasProgressFill" style="
+      height:100%;
+      width:0%;
+      background:#28a745;
+      transition:width .4s ease;
+    "></div>
+  </div>
+
+  <div id="gasPercentText" style="
+    font-size:13px;
+    font-weight:600;
+    text-align:right;
+  ">
+    0%
+  </div>
+</div>
+  <!-- PROGRESS -->
+  <div class="task-progress">
+    <div id="progressFill" class="task-progress-fill"></div>
+
+    <div id="step_assigned" class="step" data-step="1">1</div>
+    <div id="step_route" class="step" data-step="2">2</div>
+    <div id="step_site" class="step" data-step="3">3</div>
+    <div id="step_done" class="step" data-step="4">4</div>
+  </div>
+
+  <div class="task-actions">
+    <button id="btnNavigate" class="btn btn-primary">Navigate</button>
+    <button id="btnCancel" class="btn btn-outline-danger">Cancel</button>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block footer %}
+
+<script src="/static/user/user_map_core.js"></script>
+<script src="/static/user/user_map_pins.js"></script>
+<script src="/static/user/user_map_route.js"></script>
+
+<script src="/static/user/user_task_ui.js"></script>
+<script src="/static/user/user_auto_engine.js"></script>
+<script src="/static/user/user_manual_engine.js"></script>
+<script src="/static/user/user_task_router.js"></script>
+
+<script async
+  src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_MAPS_API_KEY }}&libraries=marker&v=weekly&loading=async&callback=initUserMap">
+</script>
+{% endblock %}

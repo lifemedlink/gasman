@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login – GASMAN</title>
+
+  <!-- Bootstrap 5 -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet">
+
+  <!-- Google Font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+    rel="stylesheet">
+
+<style>
+
+body{
+  background: linear-gradient(135deg,#141e30,#243b55);
+  font-family:'Poppins',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+/* Background glow */
+
+body::before,
+body::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  filter:blur(70px);
+  animation:float 14s infinite alternate ease-in-out;
+  z-index:0;
+}
+
+body::before{
+  width:500px;
+  height:500px;
+  background:rgba(255,255,255,0.15);
+  top:-200px;
+  left:-200px;
+}
+
+body::after{
+  width:420px;
+  height:420px;
+  background:rgba(255,255,255,0.1);
+  bottom:-200px;
+  right:-200px;
+  animation-direction:alternate-reverse;
+}
+
+@keyframes float{
+  from{transform:translateY(0)}
+  to{transform:translateY(40px)}
+}
+
+
+/* Login Card */
+
+.login-card{
+  position:relative;
+  width:100%;
+  max-width:420px;
+  background:rgba(255,255,255,0.14);
+  backdrop-filter:blur(16px);
+  padding:34px;
+  border-radius:16px;
+  box-shadow:0 14px 40px rgba(0,0,0,.45);
+  color:#fff;
+  z-index:2;
+  animation:slideFade .7s ease forwards;
+}
+
+@keyframes slideFade{
+  from{
+    opacity:0;
+    transform:translateY(30px) scale(.95);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+
+/* Title */
+
+.login-title h1{
+  font-size:28px;
+  font-weight:600;
+  letter-spacing:1px;
+}
+
+.login-title h3{
+  font-size:13px;
+  font-weight:300;
+  opacity:.85;
+  margin-bottom:24px;
+}
+
+
+/* Form */
+
+.form-label{
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+.form-control{
+  height:46px;
+  background:rgba(255,255,255,0.18);
+  border:none;
+  color:#fff;
+}
+
+.form-control::placeholder{
+  color:rgba(255,255,255,.65);
+}
+
+.form-control:focus{
+  background:rgba(255,255,255,0.25);
+  color:#fff;
+  box-shadow:0 0 0 2px rgba(255,255,255,.25);
+}
+
+
+/* Button */
+
+.btn-custom{
+  height:48px;
+  background:linear-gradient(135deg,#ff6a00,#ff9000);
+  border:none;
+  font-weight:500;
+  letter-spacing:.5px;
+  transition:.2s;
+}
+
+.btn-custom:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+
+
+/* Caps warning */
+
+.caps-warning{
+  display:none;
+  font-size:12px;
+  color:#ffc107;
+  margin-top:4px;
+}
+
+
+/* Mobile responsive */
+
+@media (max-width:768px){
+
+  body{
+    align-items:flex-start;
+    padding-top:60px;
+  }
+
+  .login-card{
+    max-width:100%;
+    padding:28px;
+  }
+
+  .login-title h1{
+    font-size:24px;
+  }
+
+}
+
+
+@media (max-width:420px){
+
+  .login-card{
+    padding:24px;
+  }
+
+  .login-title h1{
+    font-size:22px;
+  }
+
+}
+/* Password strength */
+
+.password-strength{
+  height:6px;
+  background:rgba(255,255,255,0.15);
+  border-radius:6px;
+  overflow:hidden;
+}
+
+.strength-bar{
+  height:100%;
+  width:0%;
+  transition:width .3s ease;
+}
+
+/* Strength colors */
+
+.strength-weak{
+  background:#dc3545;
+}
+
+.strength-medium{
+  background:#ffc107;
+}
+
+.strength-strong{
+  background:#28a745;
+}
+
+/* Login error animation */
+
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  50%{transform:translateX(6px)}
+  75%{transform:translateX(-6px)}
+  100%{transform:translateX(0)}
+}
+
+.login-error{
+  animation:shake .35s;
+}
+</style>
+</head>
+
+<body>
+
+  <div class="login-card">
+
+    <div class="login-title text-center">
+      <h1>GASMAN</h1>
+      <h3>Gas Monitoring & Operations Platform</h3>
+    </div>
+
+{% if msg == "session_expired" %}
+  <div class="alert alert-warning py-2 small text-center">
+    You were logged out because your account was used on another device.
+  </div>
+{% elif msg %}
+  <div class="alert alert-danger py-2 small text-center">
+    {{ msg }}
+  </div>
+{% endif %}
+
+    <form action="/login" method="POST" autocomplete="off">
+
+      <!-- Username -->
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input
+          type="text"
+          name="username"
+          class="form-control"
+          placeholder="Enter your username"
+          required
+          autofocus>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+
+        <div class="input-group">
+          <input
+            id="password"
+            type="password"
+            name="password"
+            class="form-control"
+            placeholder="Enter your password"
+            required
+            onkeyup="checkCapsLock(event)">
+
+          <button
+            type="button"
+            class="btn btn-outline-light"
+            onclick="togglePassword()"
+            tabindex="-1">
+            👁
+          </button>
+        </div>
+
+<div class="password-strength mt-2">
+  <div id="strengthBar" class="strength-bar"></div>
+</div>
+<div id="strengthText" class="small mt-1"></div>
+<div id="capsWarning" class="caps-warning">
+⚠ Caps Lock is ON
+</div>
+      </div>
+
+<button id="loginBtn" type="submit" class="btn btn-custom w-100 mt-3">
+<span id="loginText">Login</span>
+<span id="loginSpinner" class="spinner-border spinner-border-sm ms-2" style="display:none;"></span>
+</button>
+    </form>
+
+  </div>
+
+ <script>
+
+function togglePassword(){
+  const p=document.getElementById("password");
+  p.type=(p.type==="password")?"text":"password";
+}
+
+function checkCapsLock(e){
+  const warning=document.getElementById("capsWarning");
+if(!warning) return;
+  if(e.getModifierState && e.getModifierState("CapsLock")){
+    warning.style.display="block";
+  }else{
+    warning.style.display="none";
+  }
+
+  checkStrength();
+}
+
+/* Password strength */
+
+function checkStrength(){
+
+  const password=document.getElementById("password").value;
+
+  const bar=document.getElementById("strengthBar");
+  const text=document.getElementById("strengthText");
+
+  let score=0;
+
+  if(password.length>6) score++;
+  if(/[A-Z]/.test(password)) score++;
+  if(/[0-9]/.test(password)) score++;
+  if(/[^A-Za-z0-9]/.test(password)) score++;
+
+  bar.className="strength-bar";
+
+  if(password.length===0){
+    bar.style.width="0%";
+    text.innerText="";
+    return;
+  }
+
+  if(score<=1){
+    bar.style.width="30%";
+    bar.classList.add("strength-weak");
+    text.innerText="Weak password";
+  }
+  else if(score<=3){
+    bar.style.width="65%";
+    bar.classList.add("strength-medium");
+    text.innerText="Medium strength";
+  }
+  else{
+    bar.style.width="100%";
+    bar.classList.add("strength-strong");
+    text.innerText="Strong password";
+  }
+
+}
+
+/* Login loading UI */
+
+document.querySelector("form").addEventListener("submit",function(e){
+
+  if(this.dataset.submitted){
+    e.preventDefault();
+    return;
+  }
+
+  this.dataset.submitted=true;
+
+  const btn=document.getElementById("loginBtn");
+
+  btn.disabled=true;
+
+  document.getElementById("loginText").innerText="Signing in";
+
+  document.getElementById("loginSpinner").style.display="inline-block";
+
+});
+
+
+/* Shake card if error */
+
+const alertBox=document.querySelector(".alert-danger");
+
+if(alertBox){
+  document.querySelector(".login-card").classList.add("login-error");
+}
+
+</script>
+
+</body>
+</html>

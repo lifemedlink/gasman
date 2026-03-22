@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.activity-header{
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
+}
+
+.task-card{
+  background:#fff;
+  border-radius:14px;
+  padding:14px;
+  margin:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+  cursor:pointer;
+}
+
+.task-header{
+  display:flex;
+  justify-content:space-between;
+}
+
+.badge{
+  padding:4px 8px;
+  font-size:11px;
+  border-radius:999px;
+}
+
+.badge-completed{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.task-meta{
+  font-size:12px;
+  color:#555;
+  margin-top:6px;
+}
+
+/* ================= MODAL ================= */
+#activityModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.modal-card{
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  width:92%;
+  max-width:420px;
+  max-height:85vh;
+  overflow-y:auto;
+  position:relative;
+}
+
+.modal-title{
+  font-size:18px;
+  font-weight:900;
+}
+
+.modal-sub{
+  font-size:13px;
+  color:#666;
+}
+
+.status-pill{
+  display:inline-block;
+  margin-top:6px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.close-btn{
+  position:absolute;
+  right:14px;
+  top:12px;
+  font-size:18px;
+  cursor:pointer;
+}
+
+/* ================= VERTICAL TIMELINE ================= */
+.timeline-vertical{
+  margin-top:16px;
+  border-left:2px solid #e5e7eb;
+  padding-left:14px;
+}
+
+.timeline-item{
+  display:flex;
+  gap:12px;
+  margin-bottom:18px;
+  position:relative;
+}
+
+.timeline-item::before{
+  content:"";
+  position:absolute;
+  left:-21px;
+  top:4px;
+  width:10px;
+  height:10px;
+  background:#0d6efd;
+  border-radius:50%;
+}
+
+.timeline-time{
+  min-width:48px;
+  font-weight:800;
+  font-size:12px;
+}
+
+.timeline-label{
+  font-size:13px;
+  line-height:1.4;
+  word-break:break-word;
+}
+</style>
+
+<div class="activity-header">
+  <h4>📊 Activity</h4>
+  <input type="date" id="activityDate">
+</div>
+
+<div id="activityList"></div>
+
+<!-- ================= MODAL ================= -->
+<div id="activityModal">
+  <div class="modal-card">
+    <div class="close-btn" onclick="closeActivityModal()">✕</div>
+
+    <div class="modal-title" id="m_device"></div>
+    <div class="modal-sub" id="m_tracking"></div>
+    <span class="status-pill" id="m_status"></span>
+
+    <div class="timeline-vertical" id="m_timeline"></div>
+  </div>
+</div>
+
+<script src="/static/user/user_activity.js"></script>
+{% endblock %}
