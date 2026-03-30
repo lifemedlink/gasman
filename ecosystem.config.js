@@ -18,7 +18,7 @@ const commonEnv = {
 
   REDIS_URL: "redis://127.0.0.1:6379/0",
 
-  JWT_SECRET: "a8af1cd19fd8682f4647befe4f89c338b953d0b9b784651a81cb1386d4992c1e",
+  JWT_SECRET: process.env.JWT_SECRET,
 
   GOOGLE_MAPS_API_KEY: "AIzaSyAIOVtlbGHARudV9B6eoXLxxTciXNuairo"
 };
