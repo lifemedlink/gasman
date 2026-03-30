@@ -20,7 +20,7 @@ const commonEnv = {
 
   JWT_SECRET: process.env.JWT_SECRET,
 
-  GOOGLE_MAPS_API_KEY: "AIzaSyAIOVtlbGHARudV9B6eoXLxxTciXNuairo"
+  GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
 };
 
 module.exports = {
