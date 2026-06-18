@@ -50,8 +50,8 @@ window.initUserMap = async function () {
 
 map = new google.maps.Map(document.getElementById("userMap"), {
 
-center: { lat: 12.9716, lng: 77.5946 },
-zoom: 13,
+center: { lat: 25.2048, lng: 55.2708 },
+zoom: 12,
 mapId: "DEMO_MAP_ID",
 
 heading: 0,
@@ -135,8 +135,8 @@ pos => {
 
   if (!firstFix) {
 
-  //  map.setCenter(newPos);
-   // map.setZoom(18);
+    map.setCenter(newPos);
+    map.setZoom(18);
 
     followDriver = true;
     firstFix = true;
