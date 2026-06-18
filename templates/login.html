@@ -190,33 +190,18 @@ body::after{
   }
 
 }
-/* Password strength */
-
-.password-strength{
-  height:6px;
-  background:rgba(255,255,255,0.15);
-  border-radius:6px;
-  overflow:hidden;
+.form-check{
+  margin-top:10px;
 }
 
-.strength-bar{
-  height:100%;
-  width:0%;
-  transition:width .3s ease;
+.form-check-input{
+  background-color:rgba(255,255,255,.2);
+  border-color:rgba(255,255,255,.4);
 }
 
-/* Strength colors */
-
-.strength-weak{
-  background:#dc3545;
-}
-
-.strength-medium{
-  background:#ffc107;
-}
-
-.strength-strong{
-  background:#28a745;
+.form-check-label{
+  font-size:13px;
+  color:#fff;
 }
 
 /* Login error animation */
@@ -241,7 +226,7 @@ body::after{
 
     <div class="login-title text-center">
       <h1>GASMAN</h1>
-      <h3>Gas Monitoring & Operations Platform</h3>
+      <h3>Gas Monitoring And Navigation</h3>
     </div>
 
 {% if msg == "session_expired" %}
@@ -291,10 +276,17 @@ body::after{
           </button>
         </div>
 
-<div class="password-strength mt-2">
-  <div id="strengthBar" class="strength-bar"></div>
+<div class="form-check mt-2">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    id="rememberMe"
+    name="remember_me">
+
+  <label class="form-check-label" for="rememberMe">
+    Remember Me
+  </label>
 </div>
-<div id="strengthText" class="small mt-1"></div>
 <div id="capsWarning" class="caps-warning">
 ⚠ Caps Lock is ON
 </div>
@@ -329,45 +321,7 @@ if(!warning) return;
 
 /* Password strength */
 
-function checkStrength(){
 
-  const password=document.getElementById("password").value;
-
-  const bar=document.getElementById("strengthBar");
-  const text=document.getElementById("strengthText");
-
-  let score=0;
-
-  if(password.length>6) score++;
-  if(/[A-Z]/.test(password)) score++;
-  if(/[0-9]/.test(password)) score++;
-  if(/[^A-Za-z0-9]/.test(password)) score++;
-
-  bar.className="strength-bar";
-
-  if(password.length===0){
-    bar.style.width="0%";
-    text.innerText="";
-    return;
-  }
-
-  if(score<=1){
-    bar.style.width="30%";
-    bar.classList.add("strength-weak");
-    text.innerText="Weak password";
-  }
-  else if(score<=3){
-    bar.style.width="65%";
-    bar.classList.add("strength-medium");
-    text.innerText="Medium strength";
-  }
-  else{
-    bar.style.width="100%";
-    bar.classList.add("strength-strong");
-    text.innerText="Strong password";
-  }
-
-}
 
 /* Login loading UI */
 

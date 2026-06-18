@@ -234,19 +234,72 @@ if(navBtn){
     navBtn.className = "btn btn-primary";
     show(navBtn);
 
-    navBtn.onclick = ()=>{
-       window.NAV_MODE = "MAPS";
-      if(window.startNavigation) window.startNavigation(task);
+/*    navBtn.onclick = () => {
+
+      window.NAV_MODE = "MAPS";
+
+      if(window.startNavigation){
+        window.startNavigation(task);
+      }
+
     };
 
-    /* ===============================
-       AUTO ROUTE START (NEW)
-    =============================== */
     if(task.status === "EN_ROUTE"){
       if(window.startNavigation){
         window.startNavigation(task);
       }
+    }*/
+navBtn.onclick = async () => {
+
+  try {
+
+    const r = await fetch("/user/devices/map", {
+      credentials: "include"
+    });
+
+    if (!r.ok) {
+      alert("Unable to load destination");
+      return;
     }
+
+    const devices = await r.json();
+
+    const dev = devices.find(
+      d => d.device_id === task.device_id
+    );
+
+    if (!dev || !dev.coordinates) {
+      alert("Destination not found");
+      return;
+    }
+
+    const [lat, lng] =
+      dev.coordinates.split(",").map(v => v.trim());
+
+    window.location.href =
+      `google.navigation:q=${lat},${lng}&mode=d`;
+
+  } catch (e) {
+
+    console.error(e);
+    alert("Navigation failed");
+
+  }
+
+};
+  //}
+
+//};
+
+if(task.status === "EN_ROUTE"){
+
+  window.NAV_MODE = "INTERNAL";
+
+  if(window.startNavigation){
+    window.startNavigation(task);
+  }
+
+}
 
   }
 

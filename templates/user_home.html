@@ -203,23 +203,38 @@ body{ background:var(--bg); }
  /* Info rows */
 .task-row{
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  font-size:14px;
-  margin-bottom:8px;
-  flex-wrap:nowrap;
+  justify-content:space-between;
+  margin-bottom:10px;
 }
 
 .task-row b{
+  width:90px;
   min-width:90px;
-  flex-shrink:0;
+  font-weight:700;
 }
 
 .task-row span{
+  flex:1;
   text-align:right;
-  flex-grow:1;
+  white-space:nowrap;
+  display:block;
 }
 
+.eta-value{
+  display:inline;
+  white-space:nowrap;
+}
+ .distance-row{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+}
+
+.distance-row span{
+  text-align:right !important;
+  white-space:nowrap !important;
+}
 /* ================= PROGRESS TIMELINE ================= */
 
 .task-progress{
@@ -328,12 +343,6 @@ body{ background:var(--bg); }
 }
 
 
-.eta-value{
-  font-weight:600;
-  color:#212529;
-  white-space:nowrap;
-}
-
 /* Smooth navigate button animation */
 .btn-primary {
   transition: all .25s ease;
@@ -405,8 +414,6 @@ body{ background:var(--bg); }
   <div id="modeToggle" class="mode-toggle">
     <span id="modeLetter">Mode</span>
   </div>
-
-  <button id="refreshBtn">🔄</button>
 </div>
 
 <!-- ================= MAP ================= -->
@@ -484,8 +491,8 @@ body{ background:var(--bg); }
     <div class="task-row"><b>Customer</b><span id="t_customer"></span></div>
     <div class="task-row"><b>Location</b><span id="t_location"></span></div>
     <div class="task-row">
-  <b>ETA</b>
-  <span id="t_eta">--</span>
+  <b>Distance</b>
+  <span id="t_eta" class="eta-value">--</span>
 </div>
     <div class="task-actions">
       <button id="btnAccept" class="btn btn-success">Accept</button>
@@ -514,10 +521,10 @@ body{ background:var(--bg); }
     <span id="a_tracking"></span>
   </div>
 
- <div class="task-row">
-    <b>ETA</b>
-    <span id="a_eta" class="eta-value">-</span>
-  </div>
+ <div class="task-row distance-row">
+    <b>Distance</b>
+    <span id="a_eta">--</span>
+ </div>
 
   <div class="task-row">
     <b>Status</b>

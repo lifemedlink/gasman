@@ -24,16 +24,11 @@ max-width:1600px;
 /* =========================================================
    HEADER STRIP
 ========================================================= */
-
 .dashboard-header {
-  padding: 26px 0 22px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 22px;
-  background: linear-gradient(
-    to right,
-    rgba(37,99,235,0.06),
-    transparent
-  );
+  padding: 20px 0 8px;
+  border-bottom: none;
+  margin-bottom: 0;
+  background: transparent;
 }
 
 .dashboard-title {
@@ -71,7 +66,7 @@ gap:12px;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
 gap:14px;
-margin-bottom:20px;
+margin-bottom:8px;
 align-items:end;
 }
 
@@ -114,7 +109,7 @@ font-weight:800;
 ========================================================= */
 
 .map-section {
-  margin-top: 24px;
+  margin-top: 0;
 }
 
 .map-card {
@@ -132,7 +127,8 @@ font-weight:800;
   font-weight: 700;
   font-size: 14px;
   border-bottom: 1px solid var(--border);
-  display: flex;
+/*  display: flex;*/
+  display:none;
   justify-content: space-between;
   align-items: center;
 }
@@ -193,12 +189,9 @@ font-weight:800;
 
     <div class="dashboard-title-block">
       <div class="dashboard-title">
-        GASMAN – Gas Devices Monitoring and Operation Management
+        Device Monitoring and Operations Management
       </div>
-      <div class="dashboard-sub">
-        • Real-time Gas Monitoring • Fleet Intelligence • Device Health Analytics
-      </div>
-    </div>
+     </div>
 
     <div class="kpi-grid">
 
@@ -243,14 +236,14 @@ font-weight:800;
 
     <div class="map-card">
 
-      <div class="map-header">
-        <span>Live Device & Driver Tracking</span>
+<!--      <div class="map-header">
+     <!--   <span>Live Devices Gas Level and Task Tracking Dashboard</span> -->
 
-        <div class="map-actions">
+<!--        <div class="map-actions">
           <button class="map-btn" onclick="loadAdminMap()">Refresh</button>
           <button class="map-btn" onclick="document.getElementById('adminMap').requestFullscreen()">Fullscreen</button>
         </div>
-      </div>
+      </div>-->
 
       <div id="adminMap"></div>
 

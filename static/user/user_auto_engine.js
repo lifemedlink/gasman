@@ -341,8 +341,13 @@ async function startNavigation(task) {
 
   if (!dev?.coordinates) return;
 
-  const [lat, lng] = dev.coordinates.split(",").map(v => v.trim());
+//  const [lat, lng] = dev.coordinates.split(",").map(v => v.trim());
+const [lat, lng] = dev.coordinates.split(",").map(v => v.trim());
 
+window.currentDestinationCoords = {
+  lat,
+  lng
+};
 
   /* =====================================================
      INTERNAL NAVIGATION
@@ -365,23 +370,5 @@ async function startNavigation(task) {
    SMART NAVIGATION (PHONE → APP, DESKTOP → TAB)
 ===================================================== */
 
-const latlng = `${lat},${lng}`;
-
-const isMobile =
-  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-if (isMobile) {
-
-  /* PHONE → open Google Maps APP */
-  window.location.href = `google.navigation:q=${latlng}&mode=d`;
-
-} else {
-
-  /* DESKTOP → open new browser tab */
-  window.open(
-    `https://www.google.com/maps/dir/?api=1&destination=${latlng}&travelmode=driving`,
-    "_blank"
-  );
-
-}
+return;
 }

@@ -25,7 +25,7 @@ let gpsWatcher = null;
 let markerAnimation = null;
 
 /* Navigation camera controls */
-let followDriver = true;
+let followDriver = false;
 
 /* Navigation camera offset */
 const NAV_OFFSET = 0.35;
@@ -135,8 +135,8 @@ pos => {
 
   if (!firstFix) {
 
-    map.setCenter(newPos);
-    map.setZoom(18);
+  //  map.setCenter(newPos);
+   // map.setZoom(18);
 
     followDriver = true;
     firstFix = true;
@@ -166,7 +166,7 @@ const speed = pos.coords.speed || 0;
 
 /* Better zoom levels for navigation */
 
-if (speed > 20) {
+/*if (speed > 20) {
   map.setZoom(15);
 }
 else if (speed > 10) {
@@ -177,7 +177,7 @@ else if (speed > 3) {
 }
 else {
   map.setZoom(17);
-}
+}*/
 
   /* GPS ping to backend */
 

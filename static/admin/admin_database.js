@@ -449,7 +449,7 @@ serviceResolver = resolve;
 }
 
 
-async function submitServicePassword(){
+/*async function submitServicePassword(){
 
 const password =
 document.getElementById("servicePasswordInput").value;
@@ -477,6 +477,38 @@ if(serviceResolver){
 serviceResolver(true);
 }
 
+}*/
+async function submitServicePassword(){
+
+    const password =
+    document.getElementById("servicePasswordInput").value;
+
+    const r = await fetch("/admin/verify-service-password",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({password})
+    });
+
+    const data = await r.json();
+
+    if(data.status !== "ok"){
+
+        document.getElementById(
+            "servicePasswordError"
+        ).style.display = "block";
+
+        return;
+    }
+
+    serviceModal.hide();
+
+    document.getElementById(
+        "protectedContent"
+    ).style.display = "block";
+
+    initDatabaseDashboard();
 }
 /* =========================================================
    AUTO REFRESH
@@ -495,4 +527,16 @@ loadLargestTables();
    START DASHBOARD
 ========================================================= */
 
-initDatabaseDashboard();
+//initDatabaseDashboard();
+document.addEventListener("DOMContentLoaded", () => {
+
+    serviceModal = new bootstrap.Modal(
+        document.getElementById("servicePasswordModal"),
+        {
+            backdrop: "static",
+            keyboard: false
+        }
+    );
+
+    serviceModal.show();
+});

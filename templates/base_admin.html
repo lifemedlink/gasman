@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>GASMAN – Admin</title>
+<title>GASMAN-Admin</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
@@ -263,17 +263,17 @@ h1, h2, h3, h4, h5 { font-weight: 600; }
 <div class="layout">
 
   <div class="sidebar" id="sidebar">
-    <div class="sidebar-logo">GASMAN Admin</div>
+    <div class="sidebar-logo">Administrator</div>
 
     <div class="sidebar-nav">
       <a href="/admin" class="{% if request.url.path == '/admin' %}active{% endif %}">
         <i data-feather="home"></i> <span>Dashboard</span>
       </a>
       <a href="/admin/live"><i data-feather="activity"></i> <span>Live Tasks</span></a>
-      <a href="/admin/devices"><i data-feather="cpu"></i> <span>Devices</span></a>
-      <a href="/admin/activity"><i data-feather="bar-chart-2"></i> <span>Activity</span></a>
-      <a href="/admin/users"><i data-feather="users"></i> <span>Drivers</span></a>
-      <a href="/admin/consumptions"><i data-feather="trending-up"></i> <span>Usage</span></a>
+      <a href="/admin/devices"><i data-feather="cpu"></i> <span>Device Monitor</span></a>
+      <a href="/admin/activity"><i data-feather="bar-chart-2"></i> <span>Activity Tracker</span></a>
+      <a href="/admin/users"><i data-feather="users"></i> <span>Driver Info</span></a>
+      <a href="/admin/consumptions"><i data-feather="trending-up"></i> <span>Consumption Metrics</span></a>
       <a href="/admin/predictive"><i data-feather="alert-triangle"></i> <span>Predictive Alerts</span></a>
       <a href="/admin/database"><i data-feather="database"></i><span>Database Health</span></a>
       </div>
