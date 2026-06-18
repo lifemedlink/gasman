@@ -208,6 +208,8 @@ function renderDevices(devices){
 
   const markers=[];
 
+  const bounds = new google.maps.LatLngBounds();
+
   Object.values(deviceMarkers).forEach(m=>m.setMap(null));
   deviceMarkers={};
 
@@ -286,9 +288,16 @@ marker.addListener("mouseout",()=>info.close());
 markers.push(marker);
 deviceMarkers[d.device_id]=marker;
 
+bounds.extend({lat,lng});
   });
 
+if (!didFitBounds && !bounds.isEmpty()) {
 
+  map.fitBounds(bounds);
+
+  didFitBounds = true;
+
+}
   if(markerCluster) markerCluster.clearMarkers();
 
   if(window.markerClusterer?.MarkerClusterer){
