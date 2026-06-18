@@ -1,7 +1,7 @@
 // ecosystem.config.js
 // GASMAN – Fully Universal PM2 Production Config
 
-const APP_ROOT = "/home/lmltcpa/gasman";
+const APP_ROOT = "/home/ragavamadhu/gasman";
 
 const commonEnv = {
   PYTHONPATH: APP_ROOT,
