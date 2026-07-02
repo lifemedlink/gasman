@@ -49,6 +49,7 @@ def user_devices_list(user: dict = Depends(require_login)):
     cur.execute("""
         SELECT
             g.device_id,
+            d.customer_name,
             g.classification,
             g.gas_percentage,
             g.online,
@@ -76,6 +77,15 @@ def user_devices_list(user: dict = Depends(require_login)):
                 LIMIT 1
             ) AS my_tracking_id,
 
+            (
+                 SELECT t.accepted_by
+                 FROM gasman_tasks t
+                 WHERE t.device_id = g.device_id
+                   AND t.status IN ('ASSIGNED','EN_ROUTE','ON_SITE','FILLING','FILLED')
+                 ORDER BY t.id DESC
+                 LIMIT 1
+             ) AS accepted_by,
+
             EXISTS (
                 SELECT 1
                 FROM gasman_tasks t2
@@ -88,12 +98,15 @@ def user_devices_list(user: dict = Depends(require_login)):
           ON u.user_id = ud.user_id
         JOIN gasman_device_status g
           ON g.device_id = ud.device_id
+        JOIN data_logger.devicelist d
+          ON d.device_id = ud.device_id
 
         WHERE u.user_name = %s
 
         ORDER BY
           g.online DESC,
-          FIELD(g.classification,'CRITICAL','LOW','NORMAL')
+          g.gas_percentage ASC, 
+        FIELD(g.classification,'CRITICAL','LOW','NORMAL')
     """, (username, username, username))
 
     rows = cur.fetchall()
@@ -103,6 +116,8 @@ def user_devices_list(user: dict = Depends(require_login)):
     return [
         {
             "device_id": r["device_id"],
+            "customer_name": r["customer_name"],
+            "accepted_by": r["accepted_by"],
             "classification": r["classification"],
             "gas_percentage": float(r["gas_percentage"] or 0),
             "online": bool(r["online"]),
@@ -385,5 +400,6 @@ def manual_accept_task(
 
     return {
         "status": "accepted",
+        "task_id": task_id,
         "tracking_id": tracking_id
     }

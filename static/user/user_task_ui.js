@@ -291,13 +291,13 @@ navBtn.onclick = async () => {
 
 //};
 
-if(task.status === "EN_ROUTE"){
+if(task.status === "ASSIGNED" || task.status === "EN_ROUTE"){
 
-  window.NAV_MODE = "INTERNAL";
+    window.NAV_MODE = "INTERNAL";
 
-  if(window.startNavigation){
-    window.startNavigation(task);
-  }
+    if(window.startNavigation){
+        window.startNavigation(task);
+    }
 
 }
 

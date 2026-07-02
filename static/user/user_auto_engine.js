@@ -304,21 +304,22 @@ async function startNavigation(task) {
 
   try {
 
-    if (task.status === "ASSIGNED") {
+if (task.status === "ASSIGNED") {
 
-      const startRes = await fetch("/user/task/start", {
+    const startRes = await fetch("/user/task/start", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task_id: task.task_id })
-      });
+    });
 
-      if (!startRes.ok) {
+    if (startRes.ok) {
+        task.status = "EN_ROUTE";
+    } else {
         console.warn("Start skipped (already started)");
-      }
-
     }
 
+}
   } catch (e) {
 
     console.error("Start error:", e);

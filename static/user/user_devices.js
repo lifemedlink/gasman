@@ -35,7 +35,6 @@ async function loadDevices() {
       <div class="device-left">
         <div class="device-id">${d.device_id}</div>
         <div class="device-location">${d.device_location || "-"}</div>
-        ${d.my_tracking_id ? `<span class="badge badge-task">TRACKING: ${d.my_tracking_id}</span>` : ""}
       </div>
       <div class="device-right">
         <div class="gas">${Math.round(d.gas_percentage)}%</div>
@@ -58,6 +57,7 @@ window.openDeviceModal = function (d) {
 
   document.getElementById("m_id").innerText = d.device_id;
   document.getElementById("m_customer").innerText = d.customer_name || "-";
+  document.getElementById("m_accepted_by").innerText = d.accepted_by || "--------------";
   document.getElementById("m_location").innerText = d.device_location || "-";
   document.getElementById("m_gas").innerText = `${Math.round(d.gas_percentage)}%`;
   document.getElementById("m_status").innerText = d.classification;
@@ -124,14 +124,26 @@ window.openDeviceModal = function (d) {
 
         const data = await res.json();
 
-        if (data.status === "accepted") {
+if (data.status === "accepted") {
 
-          alert("Task Accepted\nTracking ID: " + data.tracking_id);
+    // Start the task (same as AUTO mode)
+    await fetch("/user/task/start", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            task_id: data.task_id
+        })
+    });
 
-          closeModal();
-          loadDevices();
+    closeModal();
 
-        } else {
+    // Open the Drive page
+    window.location.href = "/user";
+}
+ else {
           alert(data.error || "Unable to accept task");
           acceptBtn.disabled = false;
           acceptBtn.innerText = "Accept Task";
